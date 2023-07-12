@@ -26,13 +26,11 @@ async def send_keyboard(message):
 async def send_keyboard(message):
     await message.answer("Сохранен в избранное", keyboard=keyboard)
 
-
 @bot.on.message(text="Привет")
 async def hi_handler(message: Message):
     users_info = await bot.api.users.get(message.from_id)
     await message.answer(
         "Привет, {}".format(users_info[0].first_name), keyboard=keyboard
     )
-
 
 bot.run_forever()
