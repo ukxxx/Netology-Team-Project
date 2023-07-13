@@ -23,7 +23,7 @@ class VkSaver:
             get_user_id_url, params={**self.params, **user_params}
         ).json()
 
-        if result["response"]["count"] == 0:
+        if 'error' in result or result["response"]["count"] == 0:
             return None
         else:
             return result["response"]["items"]
