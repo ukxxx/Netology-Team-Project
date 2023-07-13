@@ -13,24 +13,34 @@ keyboard = (
     .add(Text("😍 Избранное"))
 ).get_json()
 
+keyboard_first_run = (
+    Keyboard(one_time=False, inline=False).add(Text("Начать работу с ботом"))
+).get_json()
 
-@bot.on.message(text="[club221556634|@club221556634] 💔 Дальше") # Тут надо будет переделать текст, пока не разобрался что делать, чтобы не писать имя группы 
+
+@bot.on.message(
+    text="[club221556634|@club221556634] 💔 Дальше"
+)  # Тут надо будет переделать текст, пока не разобрался что делать, чтобы не писать имя группы
 async def send_keyboard(message):
     await message.answer("ТУТ_БУДЕТ_СЛЕДУЮЩИЙ_КАНДИДАТ", keyboard=keyboard)
 
-@bot.on.message(text="[club221556634|@club221556634] 😍 Избранное") # Тут тоже
+
+@bot.on.message(text="[club221556634|@club221556634] 😍 Избранное")  # Тут тоже
 async def send_keyboard(message):
     await message.answer("ТУТ_БУДЕТ_ИЗБРАННОЕ", keyboard=keyboard)
 
-@bot.on.message(text="[club221556634|@club221556634] ❤ Сохранить в избранном") # И тут
+
+@bot.on.message(text="[club221556634|@club221556634] ❤ Сохранить в избранном")  # И тут
 async def send_keyboard(message):
     await message.answer("Сохранен в избранное", keyboard=keyboard)
 
-@bot.on.message(text="Привет")
+
+@bot.on.message(text="[club221556634|@club221556634] Начать работу с ботом")
 async def hi_handler(message: Message):
     users_info = await bot.api.users.get(message.from_id)
     await message.answer(
-        "Привет, {}".format(users_info[0].first_name), keyboard=keyboard
+        "Привет, {}".format(users_info[0].first_name), keyboard=keyboard_first_run
     )
+
 
 bot.run_forever()
