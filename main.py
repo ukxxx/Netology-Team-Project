@@ -1,6 +1,8 @@
 from vkbottle.bot import Bot, Message
 from vkbottle import Keyboard, Text, KeyboardButtonColor
 
+from vk_interaction import VkSaver
+
 
 bot = Bot(
     token="vk1.a.CLld4ad1X90Em_kENKKCz_6X7F-FgqpQIdPjTfO0yobWtgp7dNFxNdeCAEb_TOQGMaPtuFShfTOA5XzB17mIx6U5MjHlJBrBuo7-nsobfUoTouCqt3shWw3E9nsmR0E2b1mngQRfm0Vk5cwgzJntVc7a_7xHYh1AvsXTKILYDPQBxHuwpGs13fsk_WHg9jsn4kRpGhnOtdfHHizfXdh81A"
