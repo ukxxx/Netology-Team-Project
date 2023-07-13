@@ -23,7 +23,7 @@ class VkSaver:
             get_user_id_url, params={**self.params, **user_params}
         ).json()
 
-        if 'error' in result or result["response"]["count"] == 0:
+        if "error" in result or result["response"]["count"] == 0:
             return None
         else:
             return result["response"]["items"]
@@ -65,7 +65,7 @@ class VkSaver:
 
         toprated_list = sorted(
             photos_list, key=lambda x: x["likes"]["count"], reverse=True
-        )[:3] # Сортируем список по значениям likes.count и отрезаем 3 наибольших значения
+        )[:3]  # Сортируем список по значениям likes.count и отрезаем 3 наибольших значения
 
         for photo in toprated_list:  # Выбираем только самые большие фотографии по двум алгоритмам
             max_size = 0
