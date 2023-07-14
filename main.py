@@ -3,8 +3,10 @@ import logging
 from random import randrange
 
 import vk_api
-from vk_api.keyboard import VkKeyboard, VkKeyboardColor
+from vk_api.keyboard import VkKeyboard
 from vk_api.longpoll import VkLongPoll, VkEventType
+
+from vk_interaction import VkSaver
 
 
 logging.basicConfig(level=logging.DEBUG)
