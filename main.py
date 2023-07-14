@@ -1,46 +1,43 @@
-from vkbottle.bot import Bot, Message
-from vkbottle import Keyboard, Text, KeyboardButtonColor
+import json
+from random import randrange
+import logging
+
+import vk_api
+from vk_api.keyboard import VkKeyboard, VkKeyboardColor
+from vk_api.longpoll import VkLongPoll, VkEventType
 
 
-bot = Bot(
-    token="vk1.a.CLld4ad1X90Em_kENKKCz_6X7F-FgqpQIdPjTfO0yobWtgp7dNFxNdeCAEb_TOQGMaPtuFShfTOA5XzB17mIx6U5MjHlJBrBuo7-nsobfUoTouCqt3shWw3E9nsmR0E2b1mngQRfm0Vk5cwgzJntVc7a_7xHYh1AvsXTKILYDPQBxHuwpGs13fsk_WHg9jsn4kRpGhnOtdfHHizfXdh81A"
-)
-keyboard = (
-    Keyboard(one_time=False, inline=False)
-    .add(Text("💔 Дальше"))
-    .add(Text("❤ Сохранить в избранном"))
-    .row()
-    .add(Text("😍 Избранное"))
-).get_json()
+logging.basicConfig(level=logging.DEBUG)
 
-keyboard_first_run = (
-    Keyboard(one_time=False, inline=False).add(Text("Начать работу с ботом"))
-).get_json()
+with open('vk_credentials.json', 'r') as file:
+    token = json.loads(file.read())['group_token']
+print(token)
+vk = vk_api.VkApi(token=token)
+longpoll = VkLongPoll(vk)
 
-
-@bot.on.message(
-    text="[club221556634|@club221556634] 💔 Дальше"
-)  # Тут надо будет переделать текст, пока не разобрался что делать, чтобы не писать имя группы
-async def send_keyboard(message):
-    await message.answer("ТУТ_БУДЕТ_СЛЕДУЮЩИЙ_КАНДИДАТ", keyboard=keyboard)
+keyboard = VkKeyboard(one_time=False, inline=False)
+keyboard.add_button("💔 Дальше")
+keyboard.add_button("❤ Сохранить в избранном")
+keyboard.add_line()
+keyboard.add_button("😍 Избранное")
+keyboard = keyboard.get_keyboard()
 
 
-@bot.on.message(text="[club221556634|@club221556634] 😍 Избранное")  # Тут тоже
-async def send_keyboard(message):
-    await message.answer("ТУТ_БУДЕТ_ИЗБРАННОЕ", keyboard=keyboard)
+def write_msg(user_id, message):
+    vk.method('messages.send', {'user_id': user_id, 'message': message,  'random_id': randrange(10 ** 7), 'keyboard': keyboard})
 
 
-@bot.on.message(text="[club221556634|@club221556634] ❤ Сохранить в избранном")  # И тут
-async def send_keyboard(message):
-    await message.answer("Сохранен в избранное", keyboard=keyboard)
+for event in longpoll.listen():
+    if event.type == VkEventType.MESSAGE_NEW:
 
+        if event.to_me:
+            request = event.text
 
-@bot.on.message(text="[club221556634|@club221556634] Начать работу с ботом")
-async def hi_handler(message: Message):
-    users_info = await bot.api.users.get(message.from_id)
-    await message.answer(
-        "Привет, {}".format(users_info[0].first_name), keyboard=keyboard_first_run
-    )
-
-
-bot.run_forever()
+            if request == "💔 Дальше":
+                write_msg(event.user_id, f"ТУТ_БУДЕТ_НОВЫЙ_ЧЕЛОВЕК")
+            elif request == "😍 Избранное":
+                write_msg(event.user_id, f"ТУТ_БУДЕТ_ИЗБРАННОЕ")
+            elif request == "❤ Сохранить в избранном":
+                write_msg(event.user_id, f"Сохранен в избранном")
+            else:
+                write_msg(event.user_id, f"Не понял вашего ответа...")
