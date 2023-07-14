@@ -4,3 +4,5 @@
 /async_vk_interaction.py
 /async_read_token.py
 /async_main.py
+.idea
+.env
