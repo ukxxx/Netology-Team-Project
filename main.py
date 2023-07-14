@@ -1,6 +1,6 @@
 import json
-from random import randrange
 import logging
+from random import randrange
 
 import vk_api
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor
