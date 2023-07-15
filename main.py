@@ -38,22 +38,13 @@ vksaver = VkSaver(p_token)
 longpoll = VkLongPoll(vk)
 res = vk.method('messages.getLongPollServer')
 try:
-    connect = requests.get(f"https://{res['server']}?act=a_check&key={res['key']}&ts={res['ts']}&wait=25&mode=2&version=3")
+    connect = requests.get(f"https://{res['server']}?"
+                           f"act=a_check&key={res['key']}&ts={res['ts']}&wait=25&mode=2&version=3")
     if connect.status_code == 200:
         print('Соединение с ботом установлено')
 except Exception as ex:
     print(ex)
 
-
-# keyboard = VkKeyboard(one_time=False, inline=False)
-# keyboard.add_button("💓 Начать 💓", VkKeyboardColor.POSITIVE)
-# keyboard.add_line()
-# keyboard.add_button("💔 Дальше", VkKeyboardColor.NEGATIVE)
-# keyboard.add_button("❤ Сохранить в избранном", VkKeyboardColor.PRIMARY)
-# keyboard.add_line()
-# keyboard.add_button("😍 Избранное")
-# keyboard.add_button("Очистить беседу")
-# keyboard = keyboard.get_keyboard()
 
 keyboard = VkKeyboard(one_time=True, inline=False)
 keyboard.add_button("💓 Начать 💓", VkKeyboardColor.POSITIVE)
@@ -61,15 +52,33 @@ keyboard = keyboard.get_keyboard()
 
 
 def write_msg(user_id, message):
-    vk.method('messages.send', {'user_id': user_id, 'message': message,  'random_id': randrange(10 ** 7), 'keyboard': keyboard})
+    vk.method(
+        'messages.send',
+        {
+            'user_id': user_id,
+            'message': message,
+            'random_id': randrange(10 ** 7),
+            'keyboard': keyboard
+        }
+    )
 
 
 def send_photo(user_id, photo_url):
 
-    vk.method('messages.send', {'user_id': user_id, 'attachment': photo_url, 'random_id': randrange(10 ** 7), 'keyboard': keyboard})  # допилить
+    vk.method(
+        'messages.send',
+        {
+            'user_id': user_id,
+            'attachment': photo_url,
+            'random_id': randrange(10 ** 7),
+            'keyboard': keyboard
+        }
+    )
+
 
 def clear_chat(user_id):
     pass
+
 
 def set_params_to_match(user):
     if user["sex"] == 1:  # если пол женский, то в параметры мужской пол
@@ -83,6 +92,7 @@ def set_params_to_match(user):
         "age_to": count_age(user["bdate"])
     }
     return params_to_match
+
 
 def go_first(user_id):  # функция отправки фото для первого использования "Начали"
     user = vksaver.get_user_data(user_id)
@@ -108,15 +118,17 @@ def go_next(ids):  # функция отправки фото при нажат�
         send_photo(event.user_id, top_photos[int(f'{p_id[i]}')])
         time.sleep(0.5)
 
-# def show_main_keyboard():
-#     keyboard = VkKeyboard(one_time=False, inline=False)
-#     keyboard.add_button("💔 Дальше", VkKeyboardColor.NEGATIVE)
-#     keyboard.add_button("❤ Сохранить в избранном", VkKeyboardColor.PRIMARY)
-#     keyboard.add_line()
-#     keyboard.add_button("😍 Избранное")
-#     keyboard.add_button("Очистить беседу")
-#     keyboard = keyboard.get_keyboard()
-#     return keyboard
+
+def show_main_keyboard():
+    keyboard = VkKeyboard(one_time=False, inline=False)
+    keyboard.add_button("💔 Дальше", VkKeyboardColor.NEGATIVE)
+    keyboard.add_button("❤ Сохранить в избранном", VkKeyboardColor.PRIMARY)
+    keyboard.add_line()
+    keyboard.add_button("😍 Избранное")
+    keyboard.add_button("Очистить беседу")
+    keyboard = keyboard.get_keyboard()
+    return keyboard
+
 
 ids = []
 
@@ -130,13 +142,7 @@ for event in longpoll.listen():
             ids += go_first(event.user_id)
             print("Начали")
             pprint(ids)
-            keyboard = VkKeyboard(one_time=False, inline=False)
-            keyboard.add_button("💔 Дальше", VkKeyboardColor.NEGATIVE)
-            keyboard.add_button("❤ Сохранить в избранном", VkKeyboardColor.PRIMARY)
-            keyboard.add_line()
-            keyboard.add_button("😍 Избранное")
-            keyboard.add_button("Очистить беседу")
-            keyboard = keyboard.get_keyboard()
+            keyboard = show_main_keyboard()
         elif request == "💔 Дальше":
             # ids.pop()
             time.sleep(0.5)
