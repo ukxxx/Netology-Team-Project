@@ -10,7 +10,7 @@ class User(Base):
     user_id = sq.Column(sq.BigInteger, primary_key=True)
     vk_id = sq.Column(sq.Integer, unique=True)
     name = sq.Column(sq.String(length=100), nullable=False)
-    age = sq.Column(sq.Integer, length=3, nullable=False)  # добавить проверку на длину не больше 3
+    age = sq.Column(sq.Integer, nullable=False)  # добавить проверку на длину не больше 3
     gender = sq.Column(sq.String, nullable=False)  # добавить проверку на гендер или муж или жен -> как от вк приходит
     city = sq.Column(sq.String, nullable=False)
 
@@ -36,7 +36,7 @@ class Photo(Base):
 
     photo_id = sq.Column(sq.BigInteger, primary_key=True)
     user_id = sq.Column(sq.BigInteger, sq.ForeignKey("users.user_id"), nullable=False)
-    photo = sq.Column(sq.text)  # здесь ссылка, поискать конкретно для url другой метод
+    photo = sq.Column(sq.String)  # здесь ссылка, поискать конкретно для url другой метод
     photo_likes = sq.Column(sq.Integer)
 
     photos = relationship(User, backref="photos")

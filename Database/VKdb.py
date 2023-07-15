@@ -11,7 +11,7 @@ class VKDataBase:
 
     def __init__(self):
 
-        dialect = 'postresql'
+        dialect = 'postgresql'
         login = os.getenv('POSTGRESQL_LOGIN')
         password = os.getenv('POSTGRESQL_PASSWORD')
         self.engine = create_engine(f"{dialect}://{login}:{password}@localhost:5432/VK_dating_bot")
@@ -49,3 +49,5 @@ class VKDataBase:
     def add_to_favourite(self):
         pass
 
+vkdatabase = VKDataBase()
+vkdatabase.create_tables()

@@ -11,6 +11,12 @@ from vk_interaction import VkSaver
 from datetime import date
 today = date.today()
 
+# from Database.VKdb import VKDataBase
+
+ids = []
+db_data = {}
+db_data_list = []
+
 
 def count_age(bdate):
 
@@ -34,7 +40,6 @@ with open('vk_credentials.json', 'r') as file:
 
 vk = vk_api.VkApi(token=token)
 vksaver = VkSaver(p_token)
-
 longpoll = VkLongPoll(vk)
 res = vk.method('messages.getLongPollServer')
 try:
@@ -49,6 +54,11 @@ except Exception as ex:
 keyboard = VkKeyboard(one_time=True, inline=False)
 keyboard.add_button("💓 Начать 💓", VkKeyboardColor.POSITIVE)
 keyboard = keyboard.get_keyboard()
+
+
+def take_position(user_id):  # забирать id в базу
+    # connection = VKDataBase()
+    pass
 
 
 def write_msg(user_id, message):
@@ -104,6 +114,7 @@ def send_match_message(ids, user_id):
 
 def go_first(user_id):  # функция отправки фото для первого использования "Начали"
     user = vksaver.get_user_data(user_id)
+    pprint(user)
     params = set_params_to_match(user)
     ids = vksaver.get_user_list(**params)
     pprint(ids[-1])
@@ -111,6 +122,13 @@ def go_first(user_id):  # функция отправки фото для пер
     top_photos = vksaver.get_toprated_photos(albums_id[0])
     p_id = list(top_photos.keys())
     send_match_message(ids, user_id)
+    db_data["vk_id"] = user["id"]
+    db_data["first_name"] = user["first_name"]
+    db_data["last_name"] = user["last_name"]
+    db_data["age"] = params["age_from"]
+    db_data["sex"] = params["sex"]
+    db_data["city"] = params["city"]
+    db_data_list.append(db_data)
     for i in range(0, 3):
         send_photo(event.user_id, top_photos[int(f'{p_id[i]}')])
         time.sleep(0.5)
@@ -125,6 +143,7 @@ def go_next(ids, user_id):  # функция отправки фото при н
     print("go_next")
     print(p_id)
     send_match_message(ids, user_id)
+
     for i in range(0, 3):
         send_photo(event.user_id, top_photos[int(f'{p_id[i]}')])
         time.sleep(0.5)
@@ -141,11 +160,8 @@ def show_main_keyboard():
     return keyboard
 
 
-ids = []
-
-
 for event in longpoll.listen():
-    db_data = {}
+
     if event.type == VkEventType.MESSAGE_NEW and event.to_me:
         request = event.text
         if request == "💓 Начать 💓":
@@ -154,10 +170,7 @@ for event in longpoll.listen():
             ids += go_first(event.user_id)
             pprint(ids)
             print("Начали")
-            pprint(ids)
-            db_data["user_id"] = event.user_id
             keyboard = show_main_keyboard()
-
         elif request == "💔 Дальше":
             # ids.pop()
             time.sleep(0.5)
@@ -173,3 +186,7 @@ for event in longpoll.listen():
             pass
         else:
             write_msg(event.user_id, f"Не понял вашего ответа...")
+        print("проход")
+        with open("db_data.json", "w") as f:
+            json.dump(db_data_list, f)
+
