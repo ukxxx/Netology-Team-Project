@@ -98,22 +98,33 @@ def go_first(user_id):  # функция отправки фото для пер
     user = vksaver.get_user_data(user_id)
     params = set_params_to_match(user)
     ids = vksaver.get_user_list(**params)
+    pprint(ids[-1])
     albums_id = vksaver.get_list_of_album_ids(ids[-1]['id'])
     top_photos = vksaver.get_toprated_photos(albums_id[0])
     p_id = list(top_photos.keys())
+    name = f'{ids[-1]["first_name"]} {ids[-1]["last_name"]}'
+    profile_link = 'https://vk.com/id' + f'{ids[-1]["id"]}'
+    message = f'{name}, \n' \
+              f' {profile_link}'
+    write_msg(user_id, message)
     for i in range(0, 3):
         send_photo(event.user_id, top_photos[int(f'{p_id[i]}')])
         time.sleep(0.5)
     return ids
 
 
-def go_next(ids):  # функция отправки фото при нажатии на "Дальше". Только нужно добавить counter на id +
+def go_next(ids, user_id):  # функция отправки фото при нажатии на "Дальше". Только нужно добавить counter на id +
     # albums_id = vksaver.get_list_of_album_ids(ids[int(f"{counter}")]['id'])
     albums_id = vksaver.get_list_of_album_ids(ids[-1]['id'])
     top_photos = vksaver.get_toprated_photos(albums_id[0])
     p_id = list(top_photos.keys())
     print("go_next")
     print(p_id)
+    name = f'{ids[-1]["first_name"]} {ids[-1]["last_name"]}'
+    profile_link = 'https://vk.com/id' + f'{ids[-1]["id"]}'
+    message = f'{name}, \n' \
+              f' {profile_link}'
+    write_msg(user_id, message)
     for i in range(0, 3):
         send_photo(event.user_id, top_photos[int(f'{p_id[i]}')])
         time.sleep(0.5)
@@ -138,8 +149,9 @@ for event in longpoll.listen():
         request = event.text
         if request == "💓 Начать 💓":
             time.sleep(0.5)
-            write_msg(event.user_id, f"НАЧНЕМ")
+            write_msg(event.user_id, f"Может быть это твоя любовь? :)")
             ids += go_first(event.user_id)
+            pprint(ids)
             print("Начали")
             pprint(ids)
             keyboard = show_main_keyboard()
@@ -148,8 +160,8 @@ for event in longpoll.listen():
             time.sleep(0.5)
             print("Дальше")
             pprint(ids)
-            write_msg(event.user_id, f"ТУТ_БУДЕТ_НОВЫЙ_ЧЕЛОВЕК")
-            go_next(ids)
+            write_msg(event.user_id, f"Вот кто тебе подойдет?")
+            go_next(ids, event.user_id)
         elif request == "😍 Избранное":
             write_msg(event.user_id, f"ТУТ_БУДЕТ_ИЗБРАННОЕ")
         elif request == "❤ Сохранить в избранном":
