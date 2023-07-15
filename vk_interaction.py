@@ -33,8 +33,8 @@ class VkSaver:
             "age_from": age_from,
             "age_to": age_to,
             "has_photo": 1,
-            "count": 100,
-            "offset": 20
+            "count": 15,
+            "offset": 3
         }
         result = requests.get(
             get_user_id_url, params={**self.params, **user_params}
