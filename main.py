@@ -45,14 +45,18 @@ except Exception as ex:
     print(ex)
 
 
-keyboard = VkKeyboard(one_time=False, inline=False)
+# keyboard = VkKeyboard(one_time=False, inline=False)
+# keyboard.add_button("💓 Начать 💓", VkKeyboardColor.POSITIVE)
+# keyboard.add_line()
+# keyboard.add_button("💔 Дальше", VkKeyboardColor.NEGATIVE)
+# keyboard.add_button("❤ Сохранить в избранном", VkKeyboardColor.PRIMARY)
+# keyboard.add_line()
+# keyboard.add_button("😍 Избранное")
+# keyboard.add_button("Очистить беседу")
+# keyboard = keyboard.get_keyboard()
+
+keyboard = VkKeyboard(one_time=True, inline=False)
 keyboard.add_button("💓 Начать 💓", VkKeyboardColor.POSITIVE)
-keyboard.add_line()
-keyboard.add_button("💔 Дальше", VkKeyboardColor.NEGATIVE)
-keyboard.add_button("❤ Сохранить в избранном", VkKeyboardColor.PRIMARY)
-keyboard.add_line()
-keyboard.add_button("😍 Избранное")
-keyboard.add_button("Очистить беседу")
 keyboard = keyboard.get_keyboard()
 
 
@@ -104,6 +108,15 @@ def go_next(ids):  # функция отправки фото при нажат�
         send_photo(event.user_id, top_photos[int(f'{p_id[i]}')])
         time.sleep(0.5)
 
+# def show_main_keyboard():
+#     keyboard = VkKeyboard(one_time=False, inline=False)
+#     keyboard.add_button("💔 Дальше", VkKeyboardColor.NEGATIVE)
+#     keyboard.add_button("❤ Сохранить в избранном", VkKeyboardColor.PRIMARY)
+#     keyboard.add_line()
+#     keyboard.add_button("😍 Избранное")
+#     keyboard.add_button("Очистить беседу")
+#     keyboard = keyboard.get_keyboard()
+#     return keyboard
 
 ids = []
 
@@ -117,6 +130,13 @@ for event in longpoll.listen():
             ids += go_first(event.user_id)
             print("Начали")
             pprint(ids)
+            keyboard = VkKeyboard(one_time=False, inline=False)
+            keyboard.add_button("💔 Дальше", VkKeyboardColor.NEGATIVE)
+            keyboard.add_button("❤ Сохранить в избранном", VkKeyboardColor.PRIMARY)
+            keyboard.add_line()
+            keyboard.add_button("😍 Избранное")
+            keyboard.add_button("Очистить беседу")
+            keyboard = keyboard.get_keyboard()
         elif request == "💔 Дальше":
             # ids.pop()
             time.sleep(0.5)
