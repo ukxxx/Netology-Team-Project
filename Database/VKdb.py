@@ -37,10 +37,15 @@ class VKDataBase:
 
         self.session.close()
 
-    def save_user(self):
-        pass
+    def save_user(self, vk_id, first_name, last_name, age, sex, city):
+        user = User(vk_id=vk_id, first_name=first_name, last_name=last_name, age=age, sex=sex, city=city)
+        self.session.add(user)
+        self.session.commit()
+        self.session.close()
 
-    def save_photo(self):
+
+    def save_photo(self, photo):
+
         pass
 
     def save_match(self):
@@ -49,5 +54,14 @@ class VKDataBase:
     def add_to_favourite(self):
         pass
 
-vkdatabase = VKDataBase()
-vkdatabase.create_tables()
+    def delete(self):
+        self.session.query(Photo).delete()
+        self.session.query(Favourite).delete()
+        self.session.query(Match).delete()
+        self.session.query(User).delete()
+        self.session.commit()
+        self.session.close()
+
+vkdb = VKDataBase()
+# vkdb.delete()
+vkdb.create_tables()
