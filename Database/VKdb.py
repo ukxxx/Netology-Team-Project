@@ -48,3 +48,4 @@ class VKDataBase:
 
     def add_to_favourite(self):
         pass
+

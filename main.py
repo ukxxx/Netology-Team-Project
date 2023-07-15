@@ -94,6 +94,14 @@ def set_params_to_match(user):
     return params_to_match
 
 
+def send_match_message(ids, user_id):
+    name = f'{ids[-1]["first_name"]} {ids[-1]["last_name"]}'
+    profile_link = 'https://vk.com/id' + f'{ids[-1]["id"]}'
+    message = f'{name}, \n' \
+              f' {profile_link}'
+    write_msg(user_id, message)
+
+
 def go_first(user_id):  # функция отправки фото для первого использования "Начали"
     user = vksaver.get_user_data(user_id)
     params = set_params_to_match(user)
@@ -102,11 +110,7 @@ def go_first(user_id):  # функция отправки фото для пер
     albums_id = vksaver.get_list_of_album_ids(ids[-1]['id'])
     top_photos = vksaver.get_toprated_photos(albums_id[0])
     p_id = list(top_photos.keys())
-    name = f'{ids[-1]["first_name"]} {ids[-1]["last_name"]}'
-    profile_link = 'https://vk.com/id' + f'{ids[-1]["id"]}'
-    message = f'{name}, \n' \
-              f' {profile_link}'
-    write_msg(user_id, message)
+    send_match_message(ids, user_id)
     for i in range(0, 3):
         send_photo(event.user_id, top_photos[int(f'{p_id[i]}')])
         time.sleep(0.5)
@@ -120,11 +124,7 @@ def go_next(ids, user_id):  # функция отправки фото при н
     p_id = list(top_photos.keys())
     print("go_next")
     print(p_id)
-    name = f'{ids[-1]["first_name"]} {ids[-1]["last_name"]}'
-    profile_link = 'https://vk.com/id' + f'{ids[-1]["id"]}'
-    message = f'{name}, \n' \
-              f' {profile_link}'
-    write_msg(user_id, message)
+    send_match_message(ids, user_id)
     for i in range(0, 3):
         send_photo(event.user_id, top_photos[int(f'{p_id[i]}')])
         time.sleep(0.5)
@@ -145,6 +145,7 @@ ids = []
 
 
 for event in longpoll.listen():
+    db_data = {}
     if event.type == VkEventType.MESSAGE_NEW and event.to_me:
         request = event.text
         if request == "💓 Начать 💓":
@@ -154,7 +155,9 @@ for event in longpoll.listen():
             pprint(ids)
             print("Начали")
             pprint(ids)
+            db_data["user_id"] = event.user_id
             keyboard = show_main_keyboard()
+
         elif request == "💔 Дальше":
             # ids.pop()
             time.sleep(0.5)
