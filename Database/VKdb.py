@@ -1,6 +1,6 @@
 import os
 from sqlalchemy.orm import sessionmaker
-from models import create_tables, User, Photo, Match, Favourite
+from Database.models import create_tables, User, Photo, Match, Favourite
 from sqlalchemy import create_engine
 from dotenv import load_dotenv
 
@@ -43,16 +43,23 @@ class VKDataBase:
         self.session.commit()
         self.session.close()
 
+    def save_photo(self, user_id, photo):
+        photo = Photo(user_id=user_id, photo=photo)
+        self.session.add(photo)
+        self.session.commit()
+        self.session.close()
 
-    def save_photo(self, photo):
+    def save_match(self, user_id, user2_id):
+        match = Match(user_id=user_id, user2_id=user2_id)
+        self.session.add(match)
+        self.session.commit()
+        self.session.close()
 
-        pass
-
-    def save_match(self):
-        pass
-
-    def add_to_favourite(self):
-        pass
+    def add_to_favourite(self, match_id):
+        favourite = Favourite(match_id=match_id)
+        self.session.add(favourite)
+        self.session.commit()
+        self.session.close()
 
     def delete(self):
         self.session.query(Photo).delete()
@@ -62,6 +69,8 @@ class VKDataBase:
         self.session.commit()
         self.session.close()
 
-vkdb = VKDataBase()
-# vkdb.delete()
-vkdb.create_tables()
+
+# if __name__ == "__main__":
+    # vkdb = VKDataBase()
+    # vkdb.delete()
+    # vkdb.create_tables()

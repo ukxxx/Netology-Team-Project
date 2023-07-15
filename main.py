@@ -11,7 +11,9 @@ from vk_interaction import VkSaver
 from datetime import date
 today = date.today()
 
-# from Database.VKdb import VKDataBase
+from Database.VKdb import VKDataBase
+
+vkdatabase = VKDataBase()
 
 ids = []
 db_data = {}
@@ -122,13 +124,19 @@ def go_first(user_id):  # функция отправки фото для пер
     top_photos = vksaver.get_toprated_photos(albums_id[0])
     p_id = list(top_photos.keys())
     send_match_message(ids, user_id)
-    db_data["vk_id"] = user["id"]
-    db_data["first_name"] = user["first_name"]
-    db_data["last_name"] = user["last_name"]
-    db_data["age"] = params["age_from"]
-    db_data["sex"] = params["sex"]
-    db_data["city"] = params["city"]
-    db_data_list.append(db_data)
+    # db_data["vk_id"] = user["id"]
+    # db_data["first_name"] = user["first_name"]
+    # db_data["last_name"] = user["last_name"]
+    # db_data["age"] = params["age_from"]
+    # db_data["sex"] = params["sex"]
+    # db_data["city"] = params["city"]
+    # db_data_list.append(db_data)
+    try:
+        vkdatabase.save_user(user["id"], user["first_name"], user["last_name"], params["age_from"], user["sex"], params["city"])
+        vkdatabase.save_user(ids["id"], ids["first_name"], ids["last_name"], params["age_from"], params["sex"], params["city"])
+    except Exception as ex:
+        print(ex)
+        pass
     for i in range(0, 3):
         send_photo(event.user_id, top_photos[int(f'{p_id[i]}')])
         time.sleep(0.5)

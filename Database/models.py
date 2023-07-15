@@ -15,7 +15,6 @@ class User(Base):
     sex = sq.Column(sq.String, nullable=False)  # добавить проверку на гендер или муж или жен -> как от вк приходит
     city = sq.Column(sq.String, nullable=False)
 
-
     def __str__(self):
         return f'Users {self.user_id}: ({self.vk_id}, {self.name}, {self.age}, {self.gender}, {self.city})'
 
