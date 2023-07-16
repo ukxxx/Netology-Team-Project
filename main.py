@@ -120,8 +120,8 @@ def go_first(user_id):  # функция отправки фото для пер
     params = set_params_to_match(user)
     ids = vksaver.get_user_list(**params)
     pprint(ids[-1])
-    albums_id = vksaver.get_list_of_album_ids(ids[-1]['id'])
-    top_photos = vksaver.get_toprated_photos(albums_id[0])
+    # albums_id = vksaver.get_list_of_album_ids(ids[-1]['id'])
+    top_photos = vksaver.get_toprated_photos(ids[-1]["id"])
     p_id = list(top_photos.keys())
     send_match_message(ids, user_id)
     # db_data["vk_id"] = user["id"]
@@ -145,8 +145,8 @@ def go_first(user_id):  # функция отправки фото для пер
 
 def go_next(ids, user_id):  # функция отправки фото при нажатии на "Дальше". Только нужно добавить counter на id +
     # albums_id = vksaver.get_list_of_album_ids(ids[int(f"{counter}")]['id'])
-    albums_id = vksaver.get_list_of_album_ids(ids[-1]['id'])
-    top_photos = vksaver.get_toprated_photos(albums_id[0])
+    # albums_id = vksaver.get_list_of_album_ids(ids[-1]['id'])
+    top_photos = vksaver.get_toprated_photos(ids[-1]["id"])
     p_id = list(top_photos.keys())
     print("go_next")
     print(p_id)
