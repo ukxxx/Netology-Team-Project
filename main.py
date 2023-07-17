@@ -19,6 +19,7 @@ db_data = {}
 db_data_list = []
 person_counter = 0
 chunk_counter = 1
+chunk_size = 10
 
 keyboard_first = VkKeyboard(one_time=True, inline=False)
 keyboard_first.add_button("💓 Начать 💓", VkKeyboardColor.POSITIVE)
@@ -149,7 +150,7 @@ def go_first(user_id):  # функция отправки фото для пер
     global params
     user = vksaver.get_user_data(user_id)
     params = set_params_to_match(user)
-    ids = vksaver.get_user_list(**params)
+    ids = vksaver.get_user_list(**params, count=chunk_size)
     top_photos = vksaver.get_toprated_photos(ids[0]["id"])
     p_id = list(top_photos.values())
     send_match_message(ids, user_id)
@@ -193,7 +194,7 @@ def go_next(
 
     if person_counter == len(ids):
         person_counter = 0
-        ids = vksaver.get_user_list(**params, offset=chunk_counter * 10)
+        ids = vksaver.get_user_list(**params, offset=chunk_counter * chunk_size)
         chunk_counter += 1
 
     try:
