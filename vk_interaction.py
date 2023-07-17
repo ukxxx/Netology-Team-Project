@@ -8,23 +8,16 @@ class VkSaver:
     def __init__(self, token: str, version="5.131"):
         self.params = {"access_token": token, "v": version}
 
-    def get_user_data(
-            self, user_id
-    ):
+    def get_user_data(self, user_id):
         get_user_data = self.url + "users.get"
-        user_params = {
-            "user_ids": user_id,
-            "fields": "city, sex, bdate"
-        }
+        user_params = {"user_ids": user_id, "fields": "city, sex, bdate"}
 
-        user = requests.get(
-            get_user_data, params={**self.params, **user_params}
-        ).json()
+        user = requests.get(get_user_data, params={**self.params, **user_params}).json()
 
         return user["response"][0]
 
     def get_user_list(
-        self, city, sex, age_from, age_to, count = 10, offset = 0
+        self, city, sex, age_from, age_to, count=10, offset=0
     ):  # Принимает параметры для поиска и возвращает список словарей с данными пользователей
         get_user_id_url = self.url + "users.search"
         user_params = {
@@ -37,7 +30,7 @@ class VkSaver:
             "can_access_closed": True,
             "relation": 6,
             "count": count,
-            "offset": offset
+            "offset": offset,
         }
         result = requests.get(
             get_user_id_url, params={**self.params, **user_params}
@@ -98,9 +91,15 @@ class VkSaver:
 
         toprated_list = sorted(
             combined_photos_list, key=lambda x: x["likes"]["count"], reverse=True
-        )[:3]  # Сортируем список по значениям likes.count и отрезаем 3 наибольших значения
+        )[
+            :3
+        ]  # Сортируем список по значениям likes.count и отрезаем 3 наибольших значения
 
-        for photo in toprated_list:  # Выбираем только самые большие фотографии по двум алгоритмам
+        for (
+            photo
+        ) in (
+            toprated_list
+        ):  # Выбираем только самые большие фотографии по двум алгоритмам
             max_size = 0
             for size in photo["sizes"]:
                 counter_old_photos = 9
