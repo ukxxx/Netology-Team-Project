@@ -24,7 +24,7 @@ class VkSaver:
         return user["response"][0]
 
     def get_user_list(
-        self, city, sex, age_from, age_to
+        self, city, sex, age_from, age_to, count = 10, offset = 0
     ):  # Принимает параметры для поиска и возвращает список словарей с данными пользователей
         get_user_id_url = self.url + "users.search"
         user_params = {
@@ -36,8 +36,8 @@ class VkSaver:
             "is_closed": False,
             "can_access_closed": True,
             "relation": 6,
-            "count": 15,
-            "offset": 3
+            "count": count,
+            "offset": offset
         }
         result = requests.get(
             get_user_id_url, params={**self.params, **user_params}
@@ -121,8 +121,8 @@ class VkSaver:
 #
 # temp = VkSaver('vk1.a.7kq5ikN3cbvq844t_GN_lkGOBfp1bhByb8Tp9MT2vgVVkbs_6fiUj-bDGUfL-A74cY8wK0yx1xnBro-Hg6n9t5x3bpDE9fKglPQzxdtA2U0Qn3DnFwEuBzegVxhv0Iznku8p_p5eseAImcMLqYbSi68kQTDoa6VEqddVqd_vu6F-1mEB3UJPBWAAavcHD8g86yeTaVnr61Uer_H9bGqepA')
 # user_list = temp.get_user_list(1, 1, 35, 35)
-# # pprint(user_list)
+# # # pprint(user_list)
 # # album_ids = temp.get_list_of_album_ids(5)
-# # print(album_ids)
+# # # print(album_ids)
 # photos_list = temp.get_toprated_photos(1225565)
 # pprint(photos_list)

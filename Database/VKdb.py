@@ -8,19 +8,19 @@ load_dotenv()
 
 
 class VKDataBase:
-
     def __init__(self):
-
-        dialect = 'postgresql'
-        login = os.getenv('POSTGRESQL_LOGIN')
-        password = os.getenv('POSTGRESQL_PASSWORD')
-        self.engine = create_engine(f"{dialect}://{login}:{password}@localhost:5432/VK_dating_bot")
+        dialect = "postgresql"
+        login = os.getenv("POSTGRESQL_LOGIN")
+        password = os.getenv("POSTGRESQL_PASSWORD")
+        self.engine = create_engine(
+            f"{dialect}://{login}:{password}@localhost:5432/VK_dating_bot"
+        )
         self.Session = sessionmaker(bind=self.engine)
         self.session = self.Session()
 
     def create_tables(self):
         create_tables(self.engine)
-        print('таблицы созданы')
+        print("таблицы созданы")
 
     def check(self):
         for c in self.session.query(User).all():
@@ -38,7 +38,14 @@ class VKDataBase:
         self.session.close()
 
     def save_user(self, vk_id, first_name, last_name, age, sex, city):
-        user = User(vk_id=vk_id, first_name=first_name, last_name=last_name, age=age, sex=sex, city=city)
+        user = User(
+            vk_id=vk_id,
+            first_name=first_name,
+            last_name=last_name,
+            age=age,
+            sex=sex,
+            city=city,
+        )
         self.session.add(user)
         self.session.commit()
         self.session.close()
@@ -71,6 +78,6 @@ class VKDataBase:
 
 
 # if __name__ == "__main__":
-    # vkdb = VKDataBase()
-    # vkdb.delete()
-    # vkdb.create_tables()
+# vkdb = VKDataBase()
+# vkdb.delete()
+# vkdb.create_tables()

@@ -7,6 +7,7 @@ from vkbottle import Keyboard, Text, PhotoMessageUploader
 from async_vk_interaction import VkSaver
 from async_read_token import *
 
+
 async def main():
     group_token, personal_token = await get_token_async()
     bot = Bot(token=group_token)
@@ -37,7 +38,7 @@ async def main():
 
     @bot.on.message(text="[club221556634|@club221556634] 💔 Дальше")
     async def send_keyboard(message):
-         async for photo_url in photos_list:
+        async for photo_url in photos_list:
             print(photo_url)
             photo_data = await download_photo(photo_url)
             photo = await photo_uploader.upload(file_source=photo_data)
@@ -60,6 +61,7 @@ async def main():
         )
 
     await bot.run_polling()
+
 
 if __name__ == "__main__":
     loop = asyncio.new_event_loop()
