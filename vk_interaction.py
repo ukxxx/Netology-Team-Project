@@ -1,12 +1,86 @@
 import requests
 from pprint import pprint
+from random import randint
 
+token2 = "vk1.a.CLld4ad1X90Em_kENKKCz_6X7F-FgqpQIdPjTfO0yobWtgp7dNFxNdeCAEb_TOQGMaPtuFShfTOA5XzB17mIx6U5MjHlJBrBuo7-nsobfUoTouCqt3shWw3E9nsmR0E2b1mngQRfm0Vk5cwgzJntVc7a_7xHYh1AvsXTKILYDPQBxHuwpGs13fsk_WHg9jsn4kRpGhnOtdfHHizfXdh81A"
 
 class VkSaver:
     url = "https://api.vk.com/method/"
 
     def __init__(self, token: str, version="5.131"):
         self.params = {"access_token": token, "v": version}
+
+    def send_photos(self, token, owner_id):
+        get_message_upload_serv = self.url + "photos.getMessagesUploadServer"
+        params = {
+            "access_token": token,
+            "v": "5.131",
+            "group_id": 221556634
+        }
+        upl_serv_url = requests.get(get_message_upload_serv, params=params).json()
+        ph_list = list((self.get_toprated_photos(owner_id)).values())
+        ph_list_to_send_to_main = []
+        for i in ph_list:
+            r = requests.get(i)
+            img_data = r.content
+            image_name = str(randint(1, 100)) + '.jpeg'
+            data = upl_serv_url["response"]["upload_url"]
+            send = requests.post(data, files={'photo': (image_name, img_data)}).json()
+            server = send['server']
+            photo = send['photo']
+            hash = send['hash']
+            save_message = self.url + "photos.saveMessagesPhoto"
+            save_params = {
+                "access_token": "vk1.a.CLld4ad1X90Em_kENKKCz_6X7F-FgqpQIdPjTfO0yobWtgp7dNFxNdeCAEb_TOQGMaPtuFShfTOA5XzB17mIx6U5MjHlJBrBuo7-nsobfUoTouCqt3shWw3E9nsmR0E2b1mngQRfm0Vk5cwgzJntVc7a_7xHYh1AvsXTKILYDPQBxHuwpGs13fsk_WHg9jsn4kRpGhnOtdfHHizfXdh81A",
+
+                "v": "5.131",
+                "group_id": 221556634,
+                "server": server,
+                "photo": photo,
+                "hash": hash
+            }
+            res = requests.get(save_message, params={**save_params}).json()
+
+            ph_list_to_send_to_main.append([res['response'][0]['id'], res['response'][0]['owner_id']])
+
+        return ph_list_to_send_to_main
+
+
+
+    # def send_photo_file(self):
+    #     r = requests.get("https://sun9-79.userapi.com/c11046/u1225565/-6/w_0b70b720.jpg")
+    #     img_data = r.content
+    #     # print(r)
+    #     # print(img_data)
+    #     image_name = '1.jpeg'
+    #     data = self.upl_serv_url["response"]["upload_url"]
+    #     # files = "photo=@https://vk.com/albums1225565?z=photo1225565_457240935%2Fphotos1225565"
+    #     # files = {'photo': "https://sun9-79.userapi.com/c11046/u1225565/-6/w_0b70b720.jpg"}
+    #     # files = {'photo': (image_name, img_data)}
+    #     send = requests.post(data, files = {'photo': (image_name, img_data)}).json()
+    #     self.server = send['server']
+    #     self.photo = send['photo']
+    #     self.hash = send['hash']
+    #     return send
+
+
+    # def save_messages_photo(self):
+    #
+    #     save_message = self.url + "photos.saveMessagesPhoto"
+    #     params = {
+    #         "access_token": "vk1.a.CLld4ad1X90Em_kENKKCz_6X7F-FgqpQIdPjTfO0yobWtgp7dNFxNdeCAEb_TOQGMaPtuFShfTOA5XzB17mIx6U5MjHlJBrBuo7-nsobfUoTouCqt3shWw3E9nsmR0E2b1mngQRfm0Vk5cwgzJntVc7a_7xHYh1AvsXTKILYDPQBxHuwpGs13fsk_WHg9jsn4kRpGhnOtdfHHizfXdh81A",
+    #
+    #         "v": "5.131",
+    #         "group_id": 221556634,
+    #         "server": self.server,
+    #         "photo": self.photo,
+    #         "hash": self.hash
+    #     }
+    #     res = requests.get(save_message, params={**params}).json()
+    #     print(res)
+    #     self.photo_id = res['response'][0]['id']
+    #     self.owner_id = res['response'][0]['owner_id']
+
 
     def get_user_data(self, user_id):
         get_user_data = self.url + "users.get"
@@ -115,13 +189,22 @@ class VkSaver:
         return result
 
 
+
+
 # if __name__ == "__main__":
 
 #
 # temp = VkSaver('vk1.a.7kq5ikN3cbvq844t_GN_lkGOBfp1bhByb8Tp9MT2vgVVkbs_6fiUj-bDGUfL-A74cY8wK0yx1xnBro-Hg6n9t5x3bpDE9fKglPQzxdtA2U0Qn3DnFwEuBzegVxhv0Iznku8p_p5eseAImcMLqYbSi68kQTDoa6VEqddVqd_vu6F-1mEB3UJPBWAAavcHD8g86yeTaVnr61Uer_H9bGqepA')
 # user_list = temp.get_user_list(1, 1, 35, 35)
-# # # pprint(user_list)
-# # album_ids = temp.get_list_of_album_ids(5)
-# # # print(album_ids)
+# temp.get_message_upload_server()
+# temp.send_photo_file()
+# temp.save_messages_photo()
+# pprint(user_list)
+# album_ids = temp.get_list_of_album_ids(5)
+# print(album_ids)
 # photos_list = temp.get_toprated_photos(1225565)
+# #
+# temp.send_photos(token2, 1089625)
+# print(temp.send_photos(token2, 1089625))
+#
 # pprint(photos_list)

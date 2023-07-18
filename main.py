@@ -105,28 +105,36 @@ def set_params_to_match(user):
     return params_to_match
 
 
-def send_photo(user_id, photo_urls, keyboard):
-    upload_url = vk.get_api().photos.getMessagesUploadServer()["upload_url"]
+def send_photo(user_id, ow_id, keyboard):
+    # upload_url = vk.get_api().photos.getMessagesUploadServer()["upload_url"]
+    #
+    # attachments = []
+    # for photo_url in photo_urls:
+    #     response = requests.get(photo_url)
+    #     with open("temp.jpg", "wb") as file:  # Вот это
+    #         file.write(response.content)  # Вот это
+    #     upload_data = requests.post(
+    #         upload_url, files={"photo": open("temp.jpg", "rb")}
+    #     ).json()  # И вот это мне дико не нравится, но у меня не получилось передавать response.content сразу в джейсон
+    #     photo_info = vk.get_api().photos.saveMessagesPhoto(**upload_data)
+    #     attachments.append(f"photo{photo_info[0]['owner_id']}_{photo_info[0]['id']}")
 
-    attachments = []
-    for photo_url in photo_urls:
-        response = requests.get(photo_url)
-        with open("temp.jpg", "wb") as file:  # Вот это
-            file.write(response.content)  # Вот это
-        upload_data = requests.post(
-            upload_url, files={"photo": open("temp.jpg", "rb")}
-        ).json()  # И вот это мне дико не нравится, но у меня не получилось передавать response.content сразу в джейсон
-        photo_info = vk.get_api().photos.saveMessagesPhoto(**upload_data)
-        attachments.append(f"photo{photo_info[0]['owner_id']}_{photo_info[0]['id']}")
+    res = vksaver.send_photos(token, ow_id)  # вот тут не понял почему возвращает только один список с двумя значениями, а не с тремя.
+    print(res)
+    photo_id = res[0][0]
+    photo_id1 = res[1][0]
+    photo_id2 = res[2][0]
+    owner_id = res[0][1]
+
 
     vk.method(
         "messages.send",
         {
             "user_id": user_id,
-            "attachment": ",".join(attachments),
+            "attachment": f"photo{owner_id}_{photo_id}, {owner_id}_{photo_id1}, {owner_id}_{photo_id2}",  # или через запятую только {photo_id}
             "random_id": randrange(10**7),
-            "keyboard": keyboard,
-        },
+            "keyboard": keyboard
+        }
     )
 
 
@@ -181,7 +189,7 @@ def go_first(user_id):  # функция отправки фото для пер
     except Exception as ex:
         print(ex)
         pass
-    send_photo(event.user_id, p_id, keyboard_main)
+    send_photo(event.user_id, ids[0]["id"], keyboard_main)
     return ids
 
 
@@ -197,12 +205,13 @@ def go_next(
         ids = vksaver.get_user_list(**params, offset=chunk_counter * chunk_size)
         chunk_counter += 1
 
+
     try:
         top_photos = vksaver.get_toprated_photos(ids[person_counter]["id"])
         p_id = list(top_photos.values())
 
         send_match_message(ids, user_id)
-        send_photo(event.user_id, p_id, keyboard_main)
+        send_photo(event.user_id, ids[person_counter]["id"], keyboard_main)
     except:
         pass
 
