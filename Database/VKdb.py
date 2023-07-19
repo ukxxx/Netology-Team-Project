@@ -58,6 +58,7 @@ class VKDataBase:
 
     def save_match(self, user_id, user2_id):
         match = Match(user_id=user_id, user2_id=user2_id)
+        print(match) # принтуя, возвращает None вместо match_id, а он нам нужен, чтоб сохранить в таблицу
         self.session.add(match)
         self.session.commit()
         self.session.close()
@@ -78,6 +79,6 @@ class VKDataBase:
 
 
 # if __name__ == "__main__":
-# vkdb = VKDataBase()
-# vkdb.delete()
-# vkdb.create_tables()
+#     vk_db = VKDataBase()
+#     vk_db.delete()
+#     vk_db.create_tables()

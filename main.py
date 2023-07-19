@@ -6,43 +6,43 @@ from datetime import date
 
 import requests
 import vk_api
-from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 from vk_api.longpoll import VkLongPoll, VkEventType
+from dotenv import load_dotenv
 
 from vk_interaction import VkSaver
 from Database.VKdb import VKDataBase
-from resourses import phrases
+from resourses import *
+import os
+
 
 logging.basicConfig(level=logging.DEBUG)
+load_dotenv()
+
 ids = []
 db_data = {}
 db_data_list = []
 person_counter = 0
 chunk_counter = 1
 chunk_size = 10
+# user_states = {}
 
-keyboard_first = VkKeyboard(one_time=True, inline=False)
-keyboard_first.add_button("💓 Начать 💓", VkKeyboardColor.POSITIVE)
-keyboard_first = keyboard_first.get_keyboard()
+# with open("vk_credentials.json", "r") as file:
+#     token = json.loads(file.read())["group_token"]
+# with open("vk_credentials.json", "r") as file:
+#     p_token = json.loads(file.read())["personal_token"]
 
-keyboard_main = VkKeyboard(one_time=False, inline=False)
-keyboard_main.add_button("💔 Дальше", VkKeyboardColor.NEGATIVE)
-keyboard_main.add_button("❤ Сохранить в избранном", VkKeyboardColor.PRIMARY)
-keyboard_main.add_line()
-keyboard_main.add_button("😍 Избранное")
-keyboard_main.add_button("Очистить беседу")
-keyboard_main = keyboard_main.get_keyboard()
+token = os.getenv("GROUP_TOKEN")
+p_token = os.getenv("PERSONAL_TOKEN")
 
-with open("vk_credentials.json", "r") as file:
-    token = json.loads(file.read())["group_token"]
-with open("vk_credentials.json", "r") as file:
-    p_token = json.loads(file.read())["personal_token"]
+vk_db = VKDataBase()
+vk_db.delete()
+vk_db.create_tables()
 
-vkdatabase = VKDataBase()
+vksaver = VkSaver(p_token)
 
 vk = vk_api.VkApi(token=token)
 vk_pers = vk_api.VkApi(token=p_token)
-vksaver = VkSaver(p_token)
+
 longpoll = VkLongPoll(vk)
 res = vk.method("messages.getLongPollServer")
 try:
@@ -51,17 +51,14 @@ try:
         f"act=a_check&key={res['key']}&ts={res['ts']}&wait=25&mode=2&version=3"
     )
     if connect.status_code == 200:
-        print("Соединение с ботом установлено")
-except Exception as ex:
-    print(ex)
+        print("Соединение с VK установлено")
+except Exception as Error:
+    print(Error)
 
 
 def count_age(bdate):
     if len(bdate) > 5:
         day, month, year = bdate.split(".")
-        # day = int(bdate[:2])
-        # month = int(bdate[3:5])
-        # year = int(bdate[6:10])
         age = (
             date.today().year
             - int(year)
@@ -69,9 +66,8 @@ def count_age(bdate):
         )
         return age
     else:
-        print("Не указан год рождения")
+        write_msg(event.user_id, "У вас не указан год рождения. Поиск невозможен", keyboard_first)
         return None
-
 
 def write_msg(user_id, message, keyboard):
     vk.method(
@@ -83,7 +79,6 @@ def write_msg(user_id, message, keyboard):
             "keyboard": keyboard,
         },
     )
-
 
 def set_params_to_match(user):
     if user["sex"] == 1:  # если пол женский, то в параметры мужской пол
@@ -104,28 +99,13 @@ def set_params_to_match(user):
     }
     return params_to_match
 
-
 def send_photo(user_id, ow_id, keyboard):
-    # upload_url = vk.get_api().photos.getMessagesUploadServer()["upload_url"]
-    #
-    # attachments = []
-    # for photo_url in photo_urls:
-    #     response = requests.get(photo_url)
-    #     with open("temp.jpg", "wb") as file:  # Вот это
-    #         file.write(response.content)  # Вот это
-    #     upload_data = requests.post(
-    #         upload_url, files={"photo": open("temp.jpg", "rb")}
-    #     ).json()  # И вот это мне дико не нравится, но у меня не получилось передавать response.content сразу в джейсон
-    #     photo_info = vk.get_api().photos.saveMessagesPhoto(**upload_data)
-    #     attachments.append(f"photo{photo_info[0]['owner_id']}_{photo_info[0]['id']}")
 
     res = vksaver.send_photos(token, ow_id)  # вот тут не понял почему возвращает только один список с двумя значениями, а не с тремя.
-    print(res)
-    photo_id = res[0][0]
+    photo_id = res[0][0] # Тут надо будет доделать, так как бывает отдается одна или две фотографии, или вообще без фотографии, то есть этот код упадет
     photo_id1 = res[1][0]
     photo_id2 = res[2][0]
     owner_id = res[0][1]
-
 
     vk.method(
         "messages.send",
@@ -137,15 +117,25 @@ def send_photo(user_id, ow_id, keyboard):
         }
     )
 
+def add_favorite(user_id):
+    try:
+        vk_db.save_user(
+            user_id["id"],
+            user_id["first_name"],
+            user_id["last_name"],
+            params["age_from"],
+            params["sex"],
+            params["city"],
+        )
+        vk_db.save_match(event.user_id, user_id["id"])
+        vk_db.add_to_favourite() # Вот эта ебала ждет мэтч_айди, который хз откуда взять, предыдущая функция возвращает none
 
-def take_position(user_id):  # забирать id в базу
-    # connection = VKDataBase()
-    pass
-
+    except Exception as Error:
+        write_msg(event.user_id, Error, keyboard_main)
+        pass
 
 def clear_chat(user_id, chat_id=None):
     pass
-
 
 def send_match_message(ids, user_id):
     name = f'{ids[person_counter]["first_name"]} {ids[person_counter]["last_name"]}'
@@ -153,24 +143,15 @@ def send_match_message(ids, user_id):
     message = f"{name}, \n" f" {profile_link}"
     write_msg(user_id, message, keyboard_main)
 
-
-def go_first(user_id):  # функция отправки фото для первого использования "Начали"
+def go_first(user_id):
     global params
     user = vksaver.get_user_data(user_id)
     params = set_params_to_match(user)
     ids = vksaver.get_user_list(**params, count=chunk_size)
-    top_photos = vksaver.get_toprated_photos(ids[0]["id"])
-    p_id = list(top_photos.values())
     send_match_message(ids, user_id)
-    # db_data["vk_id"] = user["id"]
-    # db_data["first_name"] = user["first_name"]
-    # db_data["last_name"] = user["last_name"]
-    # db_data["age"] = params["age_from"]
-    # db_data["sex"] = params["sex"]
-    # db_data["city"] = params["city"]
-    # db_data_list.append(db_data)
+
     try:
-        vkdatabase.save_user(
+        vk_db.save_user(
             user["id"],
             user["first_name"],
             user["last_name"],
@@ -178,26 +159,15 @@ def go_first(user_id):  # функция отправки фото для пер
             user["sex"],
             params["city"],
         )
-        vkdatabase.save_user(
-            ids["id"],
-            ids["first_name"],
-            ids["last_name"],
-            params["age_from"],
-            params["sex"],
-            params["city"],
-        )
-    except Exception as ex:
-        print(ex)
+    except Exception as Error:
+        write_msg(event.user_id, Error, keyboard_main)
         pass
     send_photo(event.user_id, ids[0]["id"], keyboard_main)
     return ids
 
+def go_next(user_id,):
 
-def go_next(
-    user_id,
-):  # функция отправки фото при нажатии на "Дальше". Только нужно добавить person_counter на id +
     global person_counter, ids, chunk_counter
-
     person_counter += 1
 
     if person_counter == len(ids):
@@ -205,11 +175,7 @@ def go_next(
         ids = vksaver.get_user_list(**params, offset=chunk_counter * chunk_size)
         chunk_counter += 1
 
-
     try:
-        top_photos = vksaver.get_toprated_photos(ids[person_counter]["id"])
-        p_id = list(top_photos.values())
-
         send_match_message(ids, user_id)
         send_photo(event.user_id, ids[person_counter]["id"], keyboard_main)
     except:
@@ -218,8 +184,9 @@ def go_next(
 
 for event in longpoll.listen():
     if event.type == VkEventType.MESSAGE_NEW and event.to_me:
-        if event.text == "💓 Начать 💓":
+        if event.text == "💓 Начать 💓" and event.user_id not in user_states:
             write_msg(event.user_id, f"Может быть это твоя любовь?", keyboard_first)
+            # user_states[event.user_id] = 1
             ids += go_first(event.user_id)
         elif event.text == "💔 Дальше":
             write_msg(
@@ -227,13 +194,11 @@ for event in longpoll.listen():
             )
             go_next(event.user_id)
         elif event.text == "😍 Избранное":
-            write_msg(event.user_id, f"ТУТ_БУДЕТ_ИЗБРАННОЕ", keyboard_main)
+            write_msg(event.user_id, f"ТУТ_БУДЕТ_ИЗБРАННОЕ", keyboard_main)         
         elif event.text == "❤ Сохранить в избранном":
             write_msg(event.user_id, f"Сохранен в избранном", keyboard_main)
+            add_favorite(ids[person_counter])
         elif event.text == "Очистить беседу":
             clear_chat(event.user_id)
         else:
-            write_msg(event.user_id, f"Не понял вашего ответа...", keyboard_main)
-        print("проход")
-        with open("db_data.json", "w") as f:
-            json.dump(db_data_list, f)
+            write_msg(event.user_id, f"Привет! Начнем?", keyboard_first)
