@@ -24,7 +24,7 @@ db_data_list = []
 person_counter = 0
 chunk_counter = 1
 chunk_size = 10
-# user_states = {}
+user_states = {}
 
 # with open("vk_credentials.json", "r") as file:
 #     token = json.loads(file.read())["group_token"]
