@@ -18,11 +18,10 @@ class VkSaver:
             "group_id": 221556634
         }
         upl_serv_url = requests.get(get_message_upload_serv, params=params).json()
-        ph_list = list((self.get_toprated_photos(owner_id)).values())
-        ph_list_to_send_to_main = []
-        for i in ph_list:
-            r = requests.get(i)
-            img_data = r.content
+        photo_list = list((self.get_toprated_photos(owner_id)).values())
+        photo_list_to_send_to_main = []
+        for photo in photo_list:
+            img_data = requests.get(photo).content
             image_name = str(randint(1, 100)) + '.jpeg'
             data = upl_serv_url["response"]["upload_url"]
             send = requests.post(data, files={'photo': (image_name, img_data)}).json()
@@ -41,9 +40,15 @@ class VkSaver:
             }
             res = requests.get(save_message, params={**save_params}).json()
 
-            ph_list_to_send_to_main.append([res['response'][0]['id'], res['response'][0]['owner_id']])
-        # print(ph_list_to_send_to_main)
-        return ph_list_to_send_to_main
+# <<<<<<< HEAD
+#             ph_list_to_send_to_main.append([res['response'][0]['id'], res['response'][0]['owner_id']])
+#         # print(ph_list_to_send_to_main)
+#         return ph_list_to_send_to_main
+# =======
+            photo_list_to_send_to_main.append([res['response'][0]['id'], res['response'][0]['owner_id']])
+#
+        return photo_list_to_send_to_main
+# >>>>>>> cc5abc0eb96306333fe8d6f7ac07aaa67106065a
 
 
 
