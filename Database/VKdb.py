@@ -58,7 +58,7 @@ class VKDataBase:
 
     def save_match(self, user_id, user2_id):
         match = Match(user_id=user_id, user2_id=user2_id)
-        print(match) # принтуя, возвращает None вместо match_id, а он нам нужен, чтоб сохранить в таблицу
+        print(match) # принтуя, возвращает None вместо match_id, а он нам нужен, чтоб сохранить в таблицу favorites
         self.session.add(match)
         self.session.commit()
         self.session.close()
