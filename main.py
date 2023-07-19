@@ -119,25 +119,30 @@ def send_photo(user_id, ow_id, keyboard):
     #     photo_info = vk.get_api().photos.saveMessagesPhoto(**upload_data)
     #     attachments.append(f"photo{photo_info[0]['owner_id']}_{photo_info[0]['id']}")
 
-    res = vksaver.send_photos(token, ow_id)  # вот тут не понял почему возвращает только один список с двумя значениями, а не с тремя.
+    res = vksaver.send_photos(token, ow_id)
+    print(ow_id)
     print(res)
     photo_id = res[0][0]
+    print(photo_id)
     photo_id1 = res[1][0]
+    print(photo_id1)
     photo_id2 = res[2][0]
+    print(photo_id2)
     owner_id = res[0][1]
-
+    print(owner_id)
+    print([f"photo{owner_id}_{photo_id}", f"photo{owner_id}_{photo_id1}", f"photo{owner_id}_{photo_id2}"])
 
     vk.method(
         "messages.send",
         {
             "user_id": user_id,
-            "attachment": f"photo{owner_id}_{photo_id}, {owner_id}_{photo_id1}, {owner_id}_{photo_id2}",  # или через запятую только {photo_id}
+            "attachment": f"photo{owner_id}_{photo_id},photo{owner_id}_{photo_id1},photo{owner_id}_{photo_id2}",  # или через запятую только {photo_id}
             "random_id": randrange(10**7),
             "keyboard": keyboard
         }
     )
 
-
+# "attachment": f"photo{owner_id}_{photo_id}, {owner_id}_{photo_id1}, {owner_id}_{photo_id2}",
 def take_position(user_id):  # забирать id в базу
     # connection = VKDataBase()
     pass
@@ -155,20 +160,23 @@ def send_match_message(ids, user_id):
 
 
 def go_first(user_id):  # функция отправки фото для первого использования "Начали"
-    global params
+    global params, person_counter
     user = vksaver.get_user_data(user_id)
     params = set_params_to_match(user)
     ids = vksaver.get_user_list(**params, count=chunk_size)
+    print(ids)
     top_photos = vksaver.get_toprated_photos(ids[0]["id"])
     p_id = list(top_photos.values())
+    print(p_id)
+    if len(p_id) < 3:
+        print('сработал if')
+        person_counter += 1
+        go_next(user_id)
+        return ids
+    # top_photos = vksaver.get_toprated_photos(ids[0]["id"])
+    # p_id = list(top_photos.values())
     send_match_message(ids, user_id)
-    # db_data["vk_id"] = user["id"]
-    # db_data["first_name"] = user["first_name"]
-    # db_data["last_name"] = user["last_name"]
-    # db_data["age"] = params["age_from"]
-    # db_data["sex"] = params["sex"]
-    # db_data["city"] = params["city"]
-    # db_data_list.append(db_data)
+
     try:
         vkdatabase.save_user(
             user["id"],
@@ -207,8 +215,8 @@ def go_next(
 
 
     try:
-        top_photos = vksaver.get_toprated_photos(ids[person_counter]["id"])
-        p_id = list(top_photos.values())
+        # top_photos = vksaver.get_toprated_photos(ids[person_counter]["id"])
+        # p_id = list(top_photos.values())
 
         send_match_message(ids, user_id)
         send_photo(event.user_id, ids[person_counter]["id"], keyboard_main)
