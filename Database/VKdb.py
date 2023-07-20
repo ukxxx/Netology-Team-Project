@@ -85,10 +85,11 @@ class VKDataBase:
 
         return u_id
 
-    def query_match_id(self, user_id):
+    def query_match_id(self, user_id, target_id):
         # match = self.session.query(User.vk_id, Match.match_id).\
         #     join(User).join(Match).filter(User.vk_id == user_id)
-        match = self.session.query(Match.match_id, Match.vk_id, Match.user_id).filter(Match.vk_id == user_id).one()
+        match = self.session.query(Match.match_id, Match.vk_id, Match.user_id).filter(Match.vk_id == user_id).\
+            filter(Match.user_id == target_id).one()
         print(type(match))
         print(match._mapping)
         # favourite = match.match_id
@@ -98,6 +99,11 @@ class VKDataBase:
         # print(i)
         # print(favourite)
         return match
+
+    def get_user_params(self, vk_id):
+        user = self.session.query(User).filter(User.vk_id == vk_id)
+
+        return user
 
 # if __name__ == "__main__":
 #     vk_db = VKDataBase()
