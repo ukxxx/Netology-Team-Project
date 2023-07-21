@@ -170,7 +170,9 @@ def go_first(user_id):  # функция отправки фото для пер
     user = vksaver.get_user_data(user_id)
     params = set_params_to_match(user)
     ids = vksaver.get_user_list(**params, count=chunk_size)
-    top_photos = vksaver.get_toprated_photos(ids[0]["id"])
+    # print(f"go_first_IDS: {ids}")
+    top_photos = vksaver.get_toprated_photos(ids[person_counter]["id"])
+    print(f'go_first_top_photos: {top_photos}')
     p_id = list(top_photos.values())
     if len(p_id) < 3:
         print('сработал if')
@@ -180,35 +182,35 @@ def go_first(user_id):  # функция отправки фото для пер
 
     send_match_message(ids, user_id)
 
-    try:
-        user1 = vk_db.save_user(
-            user["id"],
-            user["first_name"],
-            user["last_name"],
-            params["age_from"],
-            user["sex"],
-            params["city"],
-        )
-        user2 = vk_db.save_user(
-                ids[0]["id"],
-                ids[0]["first_name"],
-                ids[0]["last_name"],
-                params["age_from"],
-                ids[0]["sex"],
-                params["city"]
-        )
-        for i in p_id:
-            vk_db.save_photo(
-                user2,
-                i
-            )
-        vk_db.save_match(
-            user1,
-            user2
-        )
-    except Exception as Error:
-        write_msg(event.user_id, Error, keyboard_main)
-        pass
+    # try:
+    #     # user1 = vk_db.save_user(
+    #     #     user["id"],
+    #     #     user["first_name"],
+    #     #     user["last_name"],
+    #     #     params["age_from"],
+    #     #     user["sex"],
+    #     #     params["city"],
+    #     # )
+        # user2 = vk_db.save_user(
+        #         ids[0]["id"],
+        #         ids[0]["first_name"],
+        #         ids[0]["last_name"],
+        #         params["age_from"],
+        #         ids[0]["sex"],
+        #         params["city"]
+        # )
+        # for i in p_id:
+        #     vk_db.save_photo(
+        #         user2,
+        #         i
+        #     )
+        # vk_db.save_match(
+        #     user1,
+        #     user2
+        # )
+    # except Exception as Error:
+    #     write_msg(event.user_id, Error, keyboard_main)
+    #     pass
     send_photo(event.user_id, ids[0]["id"], keyboard_main)
     return ids
 
@@ -216,24 +218,27 @@ def go_next(user_id):  # теперь после фикса БД тут не р�
 
     global person_counter, ids, chunk_counter
     person_counter += 1
+    print(f"go_next: user_id : {user_id}")
 
     if person_counter == len(ids):
+        print('сработал if в go next')
         person_counter = 0
         ids = vksaver.get_user_list(**params, offset=chunk_counter * chunk_size)
         chunk_counter += 1
 
     try:
-        # top_photos = vksaver.get_toprated_photos(ids[0]["id"])
-        # p_id = list(top_photos.values())
+        top_photos = vksaver.get_toprated_photos(ids[person_counter]["id"])
+        p_id = list(top_photos.values())
 
-        user2 = vk_db.save_user(
-            ids[0]["id"],
-            ids[0]["first_name"],
-            ids[0]["last_name"],
-            params["age_from"],
-            ids[0]["sex"],
-            params["city"]
-        )  # почему-то второго юзера не сохраняет, наверно не видит params
+        # user2 = vk_db.save_user(
+        #     ids[0]["id"],
+        #     ids[0]["first_name"],
+        #     ids[0]["last_name"],
+        #     params["age_from"],
+        #     ids[0]["sex"],
+        #     params["city"]
+        # )
+        # почему-то второго юзера не сохраняет, наверно не видит params
         # for i in p_id:
         #     vk_db.save_photo(
         #         user2,
@@ -244,7 +249,11 @@ def go_next(user_id):  # теперь после фикса БД тут не р�
         #     vk_db.get_user_params(event.user_id),
         #     user2
         # )
+        print(f"go_next_try: {ids}")
+
         send_match_message(ids, user_id)
+
+        print(f'go_next_try_person_counter: {ids[person_counter]["id"]}')
         send_photo(event.user_id, ids[person_counter]["id"], keyboard_main)
 
     except:
