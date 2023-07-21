@@ -223,12 +223,21 @@ def go_next(user_id):  # теперь после фикса БД тут не р�
     if person_counter == len(ids):
         print('сработал if в go next')
         person_counter = 0
-        ids = vksaver.get_user_list(**params, offset=chunk_counter * chunk_size)
-        chunk_counter += 1
 
+        chunk_counter += 1
+    print('1111111')
+    ids = vksaver.get_user_list(**params, offset=chunk_counter * chunk_size)
     try:
+        print("try_go_next")
+        print(ids)
+        print(ids[person_counter])
         top_photos = vksaver.get_toprated_photos(ids[person_counter]["id"])
+        print(f"try go_next_top_photos {top_photos}")
         p_id = list(top_photos.values())
+        print(f"go_next_try: {ids}")
+        send_match_message(ids, user_id)
+        print(f'go_next_try_person_counter: {ids[person_counter]["id"]}')
+        send_photo(event.user_id, ids[person_counter]["id"], keyboard_main)
 
         # user2 = vk_db.save_user(
         #     ids[0]["id"],
@@ -244,19 +253,13 @@ def go_next(user_id):  # теперь после фикса БД тут не р�
         #         user2,
         #         i
         #     )
-
+        #
         # vk_db.save_match(
         #     vk_db.get_user_params(event.user_id),
         #     user2
         # )
-        print(f"go_next_try: {ids}")
-
-        send_match_message(ids, user_id)
-
-        print(f'go_next_try_person_counter: {ids[person_counter]["id"]}')
-        send_photo(event.user_id, ids[person_counter]["id"], keyboard_main)
-
-    except:
+    except Exception as ex:
+        print(ex)
         pass
 
 
