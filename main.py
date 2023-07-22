@@ -27,22 +27,34 @@ chunk_counter = 1
 chunk_size = 10
 user_states = {}
 
-keyboard_first = VkKeyboard(one_time=True, inline=False)
-keyboard_first.add_button("💓 Начать 💓", VkKeyboardColor.POSITIVE)
-keyboard_first = keyboard_first.get_keyboard()
-keyboard_main = VkKeyboard(one_time=False, inline=False)
-keyboard_main.add_button("💔 Дальше", VkKeyboardColor.NEGATIVE)
-keyboard_main.add_button("❤ Сохранить в избранном", VkKeyboardColor.PRIMARY)
-keyboard_main.add_line()
-keyboard_main.add_button("😍 Избранное")
-keyboard_main.add_button("Очистить беседу")
-keyboard_main = keyboard_main.get_keyboard()
 
+def show_keyboard_first():
+    keyboard_first = VkKeyboard(one_time=True, inline=False)
+    keyboard_first.add_button("💓 Начать 💓", VkKeyboardColor.POSITIVE)
+    keyboard_first = keyboard_first.get_keyboard()
+    return keyboard_first
 
-# with open("vk_credentials.json", "r") as file:
-#     token = json.loads(file.read())["group_token"]
-# with open("vk_credentials.json", "r") as file:
-#     p_token = json.loads(file.read())["personal_token"]
+def show_keyboard_main():
+    keyboard_main = VkKeyboard(one_time=False, inline=False)
+    keyboard_main.add_button("💔 Дальше", VkKeyboardColor.NEGATIVE)
+    keyboard_main.add_button("❤ Сохранить в избранном", VkKeyboardColor.PRIMARY)
+    keyboard_main.add_line()
+    keyboard_main.add_button("😍 Избранное")
+    keyboard_main.add_button("Очистить беседу")
+    keyboard_main = keyboard_main.get_keyboard()
+    return keyboard_main
+
+# keyboard_first = VkKeyboard(one_time=True, inline=False)
+# keyboard_first.add_button("💓 Начать 💓", VkKeyboardColor.POSITIVE)
+# keyboard_first = keyboard_first.get_keyboard()
+# keyboard_main = VkKeyboard(one_time=False, inline=False)
+# keyboard_main.add_button("💔 Дальше", VkKeyboardColor.NEGATIVE)
+# keyboard_main.add_button("❤ Сохранить в избранном", VkKeyboardColor.PRIMARY)
+# keyboard_main.add_line()
+# keyboard_main.add_button("😍 Избранное")
+# keyboard_main.add_button("Очистить беседу")
+# keyboard_main = keyboard_main.get_keyboard()
+
 
 token = os.getenv("GROUP_TOKEN")
 p_token = os.getenv("PERSONAL_TOKEN")
@@ -264,19 +276,25 @@ def go_next(user_id):  # теперь после фикса БД тут не р�
 
 
 for event in longpoll.listen():
+
     if event.type == VkEventType.MESSAGE_NEW and event.to_me:
+
+        keyboard_first = show_keyboard_first()
         if event.text == "💓 Начать 💓" and event.user_id not in user_states:
             write_msg(event.user_id, f"Может быть это твоя любовь?", keyboard_first)
             # user_states[event.user_id] = 1
             ids += go_first(event.user_id)
         elif event.text == "💔 Дальше":
+            keyboard_main = show_keyboard_main()
             write_msg(
                 event.user_id, f"{phrases[randrange(len(phrases))]}", keyboard_main
             )
             go_next(event.user_id)
         elif event.text == "😍 Избранное":
-            write_msg(event.user_id, f"ТУТ_БУДЕТ_ИЗБРАННОЕ", keyboard_main)         
+            keyboard_main = show_keyboard_main()
+            write_msg(event.user_id, f"ТУТ_БУДЕТ_ИЗБРАННОЕ", keyboard_main)
         elif event.text == "❤ Сохранить в избранном":
+            keyboard_main = show_keyboard_main()
             write_msg(event.user_id, f"Сохранен в избранном", keyboard_main)
             user = vk_db.query_user_id(event.user_id)
             user2 = vk_db.query_user_id(ids[person_counter])

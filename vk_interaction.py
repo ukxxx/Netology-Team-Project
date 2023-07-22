@@ -45,41 +45,6 @@ class VkSaver:
         return photo_list_to_send_to_main
 
 
-    # def send_photo_file(self):
-    #     r = requests.get("https://sun9-79.userapi.com/c11046/u1225565/-6/w_0b70b720.jpg")
-    #     img_data = r.content
-    #     # print(r)
-    #     # print(img_data)
-    #     image_name = '1.jpeg'
-    #     data = self.upl_serv_url["response"]["upload_url"]
-    #     # files = "photo=@https://vk.com/albums1225565?z=photo1225565_457240935%2Fphotos1225565"
-    #     # files = {'photo': "https://sun9-79.userapi.com/c11046/u1225565/-6/w_0b70b720.jpg"}
-    #     # files = {'photo': (image_name, img_data)}
-    #     send = requests.post(data, files = {'photo': (image_name, img_data)}).json()
-    #     self.server = send['server']
-    #     self.photo = send['photo']
-    #     self.hash = send['hash']
-    #     return send
-
-
-    # def save_messages_photo(self):
-    #
-    #     save_message = self.url + "photos.saveMessagesPhoto"
-    #     params = {
-    #         "access_token": "vk1.a.CLld4ad1X90Em_kENKKCz_6X7F-FgqpQIdPjTfO0yobWtgp7dNFxNdeCAEb_TOQGMaPtuFShfTOA5XzB17mIx6U5MjHlJBrBuo7-nsobfUoTouCqt3shWw3E9nsmR0E2b1mngQRfm0Vk5cwgzJntVc7a_7xHYh1AvsXTKILYDPQBxHuwpGs13fsk_WHg9jsn4kRpGhnOtdfHHizfXdh81A",
-    #
-    #         "v": "5.131",
-    #         "group_id": 221556634,
-    #         "server": self.server,
-    #         "photo": self.photo,
-    #         "hash": self.hash
-    #     }
-    #     res = requests.get(save_message, params={**params}).json()
-    #     print(res)
-    #     self.photo_id = res['response'][0]['id']
-    #     self.owner_id = res['response'][0]['owner_id']
-
-
     def get_user_data(self, user_id):
         get_user_data = self.url + "users.get"
         user_params = {"user_ids": user_id, "fields": "city, sex, bdate"}
@@ -113,21 +78,6 @@ class VkSaver:
         else:
             return result["response"]["items"]
 
-    # def get_list_of_album_ids(
-    #     self, owner_id
-    # ):  # Принимает айди пользователя и возвращает список его альбомов
-    #     self.owner_id = owner_id
-    #     get_album_url = self.url + "photos.getAlbums"
-    #     album_params = {"owner_id": owner_id, "offset": 1, "need_system": 1}
-    #     result = requests.get(
-    #         get_album_url, params={**self.params, **album_params}
-    #     ).json()
-    #     ids = [item["id"] for item in result["response"]["items"]]
-    #
-    #     if "error" in result or result["response"]["count"] == 0:
-    #         return None
-    #     else:
-    #         return ids
 
     def get_toprated_photos(
         self, owner_id
