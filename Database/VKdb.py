@@ -105,6 +105,13 @@ class VKDataBase:
         print(type(user))
         return user
 
+    def get_favourites_list(self, user_id):
+        favourite_list = self.session.query(Favourite.favourite_id, Favourite.match_id, Match.vk_id, Match.user_id).join(Favourite).filter(Match.vk_id == user_id)
+        fav_list = []
+        for i in favourite_list:
+            fav_list.append(i.user_id)
+        print(fav_list)
+        return fav_list
 if __name__ == "__main__":
     vk_db = VKDataBase()
     vk_db.delete()
@@ -121,4 +128,5 @@ if __name__ == "__main__":
     # print(user_id2)
     # match2 = vk_db.query_match_id(user_id, user_id2)
     # vk_db.get_user_params(1225565)
-    vk_db.check()
+    # vk_db.get_favourites_list(1225565)
+    # vk_db.check()

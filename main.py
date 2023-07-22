@@ -38,10 +38,9 @@ def show_keyboard_first():
 def show_keyboard_main():
     keyboard_main = VkKeyboard(one_time=False, inline=False)
     keyboard_main.add_button("💔 Дальше", VkKeyboardColor.NEGATIVE)
-    keyboard_main.add_button("❤ Сохранить в избранном", VkKeyboardColor.PRIMARY)
+    keyboard_main.add_button("❤ Сохранить в избранном", VkKeyboardColor.POSITIVE)
     keyboard_main.add_line()
-    keyboard_main.add_button("😍 Избранное")
-    keyboard_main.add_button("Очистить беседу")
+    keyboard_main.add_button("😍 показать Избранное 😍", VkKeyboardColor.PRIMARY)
     keyboard_main = keyboard_main.get_keyboard()
     return keyboard_main
 
@@ -347,9 +346,12 @@ for event in longpoll.listen():
                 event.user_id, f"{phrases[randrange(len(phrases))]}", keyboard_main
             )
             go_next(event.user_id)
-        elif event.text == "😍 Избранное":
+        elif event.text == "😍 показать Избранное 😍":
             keyboard_main = show_keyboard_main()
-            write_msg(event.user_id, f"ТУТ_БУДЕТ_ИЗБРАННОЕ", keyboard_main)
+            favourite_list = vk_db.get_favourites_list(event.user_id)
+            print(f'fav list is: {favourite_list}')
+            fav_links = '\n'.join(["https://vk.com/id"+str(i) for i in favourite_list])
+            write_msg(event.user_id, f"😍 Лучшие из лучших 😍 \n {fav_links}", keyboard_main)
         elif event.text == "❤ Сохранить в избранном":
             ids = vksaver.get_user_list(**params, offset=chunk_counter * chunk_size)
             keyboard_main = show_keyboard_main()
