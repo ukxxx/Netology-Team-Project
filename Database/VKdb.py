@@ -76,28 +76,15 @@ class VKDataBase:
         self.session.commit()
         self.session.close()
 
-
     def query_user_id(self, vk_id):
-        user = self.session.query(User).filter(User.vk_id==vk_id)
-
+        user = self.session.query(User).filter(User.vk_id == vk_id)
         for i in user:
             u_id = i.vk_id
-
         return u_id
 
     def query_match_id(self, user_id, target_id):
-        # match = self.session.query(User.vk_id, Match.match_id).\
-        #     join(User).join(Match).filter(User.vk_id == user_id)
         match = self.session.query(Match.match_id, Match.vk_id, Match.user_id).filter(Match.vk_id == user_id).\
             filter(Match.user_id == target_id).one()
-        print(type(match))
-        print(match._mapping)
-        # favourite = match.match_id
-        #
-        # for match_id in match:
-        #     i = match_id.match_id
-        # print(i)
-        # print(favourite)
         return match
 
     def get_user_params(self, vk_id):
@@ -106,12 +93,15 @@ class VKDataBase:
         return user
 
     def get_favourites_list(self, user_id):
-        favourite_list = self.session.query(Favourite.favourite_id, Favourite.match_id, Match.vk_id, Match.user_id).join(Favourite).filter(Match.vk_id == user_id)
+        favourite_list = self.session.query(Favourite.favourite_id, Favourite.match_id, Match.vk_id, Match.user_id).\
+            join(Favourite).filter(Match.vk_id == user_id)
         fav_list = []
         for i in favourite_list:
             fav_list.append(i.user_id)
-        print(fav_list)
+
         return fav_list
+
+
 if __name__ == "__main__":
     vk_db = VKDataBase()
     vk_db.delete()

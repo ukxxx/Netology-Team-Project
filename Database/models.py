@@ -48,8 +48,7 @@ class Photo(Base):
     vk_id = sq.Column(sq.BigInteger, sq.ForeignKey("users.vk_id"), nullable=False)
     photo = sq.Column(
         sq.String
-    )  # здесь ссылка, поискать конкретно для url другой метод
-    # photo_likes = sq.Column(sq.Integer)
+    )
 
     photos = relationship(User, backref="photos")
 

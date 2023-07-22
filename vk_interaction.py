@@ -1,8 +1,12 @@
 import requests
-from pprint import pprint
+import os
 from random import randint
+from dotenv import load_dotenv
 
-token2 = "vk1.a.CLld4ad1X90Em_kENKKCz_6X7F-FgqpQIdPjTfO0yobWtgp7dNFxNdeCAEb_TOQGMaPtuFShfTOA5XzB17mIx6U5MjHlJBrBuo7-nsobfUoTouCqt3shWw3E9nsmR0E2b1mngQRfm0Vk5cwgzJntVc7a_7xHYh1AvsXTKILYDPQBxHuwpGs13fsk_WHg9jsn4kRpGhnOtdfHHizfXdh81A"
+load_dotenv()
+
+token2 = os.getenv("GROUP_TOKEN")
+
 
 class VkSaver:
     url = "https://api.vk.com/method/"
@@ -30,8 +34,7 @@ class VkSaver:
             hash = send['hash']
             save_message = self.url + "photos.saveMessagesPhoto"
             save_params = {
-                "access_token": "vk1.a.CLld4ad1X90Em_kENKKCz_6X7F-FgqpQIdPjTfO0yobWtgp7dNFxNdeCAEb_TOQGMaPtuFShfTOA5XzB17mIx6U5MjHlJBrBuo7-nsobfUoTouCqt3shWw3E9nsmR0E2b1mngQRfm0Vk5cwgzJntVc7a_7xHYh1AvsXTKILYDPQBxHuwpGs13fsk_WHg9jsn4kRpGhnOtdfHHizfXdh81A",
-
+                "access_token": os.getenv("GROUP_TOKEN"),
                 "v": "5.131",
                 "group_id": 221556634,
                 "server": server,
@@ -43,7 +46,6 @@ class VkSaver:
             photo_list_to_send_to_main.append([res['response'][0]['id'], res['response'][0]['owner_id']])
 
         return photo_list_to_send_to_main
-
 
     def get_user_data(self, user_id):
         get_user_data = self.url + "users.get"
@@ -78,14 +80,13 @@ class VkSaver:
         else:
             return result["response"]["items"]
 
-
     def get_toprated_photos(
         self, owner_id
     ):  # Принимает айди альбома и возвращает словарь со ссылками на три наиболее оцененные фотографии
         self.owner_id = owner_id
         get_photos_url = self.url + "photos.get"
         priority_old_photos = "wzyrqpoxms"
-        toprated_list = []
+        # toprated_list = []
         result = {}
         album_profile_params = {
             "owner_id": self.owner_id,
@@ -101,7 +102,6 @@ class VkSaver:
             "extended": 1,
         }
 
-
         photos_profile_list = requests.get(
             get_photos_url, params={**self.params, **album_profile_params}
         ).json()["response"]["items"]
@@ -111,12 +111,9 @@ class VkSaver:
             ).json()["response"]["items"]
 
             combined_photos_list = photos_profile_list + photos_list
-        except:
+        except Exception as er:
             combined_photos_list = photos_profile_list
-
-
-
-
+            print(er)
         toprated_list = sorted(
             combined_photos_list, key=lambda x: x["likes"]["count"], reverse=True
         )[
@@ -141,25 +138,3 @@ class VkSaver:
                         counter_old_photos = priority_old_photos.index(size["type"])
 
         return result
-
-
-
-
-# if __name__ == "__main__":
-
-#
-temp = VkSaver('vk1.a.7kq5ikN3cbvq844t_GN_lkGOBfp1bhByb8Tp9MT2vgVVkbs_6fiUj-bDGUfL-A74cY8wK0yx1xnBro-Hg6n9t5x3bpDE9fKglPQzxdtA2U0Qn3DnFwEuBzegVxhv0Iznku8p_p5eseAImcMLqYbSi68kQTDoa6VEqddVqd_vu6F-1mEB3UJPBWAAavcHD8g86yeTaVnr61Uer_H9bGqepA')
-# # # user_list = temp.get_user_list(1, 1, 35, 35)
-# # # temp.get_message_upload_server()
-# # # temp.send_photo_file()
-# # # temp.save_messages_photo()
-# # # pprint(user_list)
-# # # album_ids = temp.get_list_of_album_ids(5)
-# # # print(album_ids)
-photos_list = temp.get_toprated_photos(482565903)
-# # # #
-# # res = temp.send_photos(token2, 1089625)
-# # print(res)
-# # print(temp.send_photos(token2, 789180381))
-#
-pprint(photos_list)
