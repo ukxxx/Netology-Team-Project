@@ -32,8 +32,8 @@ class VKDataBase:
         for c in self.session.query(Match).all():
             print(c)
 
-        for c in self.session.query(Favourite).all():
-            print(c)
+        # for c in self.session.query(Favourite).all():
+        #     print(c)
 
         self.session.close()
 
@@ -101,11 +101,24 @@ class VKDataBase:
         return match
 
     def get_user_params(self, vk_id):
-        user = self.session.query(User).filter(User.vk_id == vk_id)
-
+        user = self.session.query(User).filter(User.vk_id == vk_id).one()
+        print(type(user))
         return user
 
-# if __name__ == "__main__":
-#     vk_db = VKDataBase()
-#     vk_db.delete()
-#     vk_db.create_tables()
+if __name__ == "__main__":
+    vk_db = VKDataBase()
+    vk_db.delete()
+    # vk_db.create_tables()
+
+    # user2 = vk_db.save_user(121547, "ppdpp", "oodafaa", 22, 1, 1)
+    # user3 = vk_db.save_user(12542727, "ppddpp", "ooadadfaa", 22, 2, 1)
+    # photo1 = vk_db.save_photo(user2, "urlphoto1")
+    # photo2 = vk_db.save_photo(user3, "urlphoto2")
+    # match1 = vk_db.save_match(user2, user3)
+    # user_id = vk_db.query_user_id(121547)
+    # user_id2 = vk_db.query_user_id(12542727)
+    # print(user_id)
+    # print(user_id2)
+    # match2 = vk_db.query_match_id(user_id, user_id2)
+    # vk_db.get_user_params(1225565)
+    vk_db.check()

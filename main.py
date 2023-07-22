@@ -1,5 +1,6 @@
 import json
 import logging
+import time
 from pprint import pprint
 from random import randrange
 from datetime import date
@@ -176,103 +177,159 @@ def send_match_message(ids, user_id):
     write_msg(user_id, message, keyboard_main)
 
 
-
 def go_first(user_id):  # функция отправки фото для первого использования "Начали"
     global params, person_counter
     user = vksaver.get_user_data(user_id)
+    print("user", user)
     params = set_params_to_match(user)
     ids = vksaver.get_user_list(**params, count=chunk_size)
     # print(f"go_first_IDS: {ids}")
     top_photos = vksaver.get_toprated_photos(ids[person_counter]["id"])
-    print(f'go_first_top_photos: {top_photos}')
+    # print(f'go_first_top_photos: {top_photos}')
     p_id = list(top_photos.values())
+
+    try:
+        print(f'{user["id"]}, {user["first_name"]},{user["last_name"]},{params["age_from"]},{user["sex"]},{params["city"]}')
+        user1 = vk_db.save_user(
+            user["id"],
+            user["first_name"],
+            user["last_name"],
+            params["age_from"],
+            user["sex"],
+            params["city"],
+        )
+
+    except Exception as ex:
+        print("try user1 ex", ex)
+
     if len(p_id) < 3:
         print('сработал if')
-        person_counter += 1
         go_next(user_id)
         return ids
 
     send_match_message(ids, user_id)
 
-    # try:
-    #     # user1 = vk_db.save_user(
-    #     #     user["id"],
-    #     #     user["first_name"],
-    #     #     user["last_name"],
-    #     #     params["age_from"],
-    #     #     user["sex"],
-    #     #     params["city"],
-    #     # )
-        # user2 = vk_db.save_user(
-        #         ids[0]["id"],
-        #         ids[0]["first_name"],
-        #         ids[0]["last_name"],
-        #         params["age_from"],
-        #         ids[0]["sex"],
-        #         params["city"]
+    print("user2", ids[person_counter]["id"],
+                ids[person_counter]["first_name"],
+                ids[person_counter]["last_name"],
+                params["age_from"],
+                # ids[0]["sex"],
+                params["city"])
+    try:
+        # user1 = vk_db.save_user(
+        #     user["id"],
+        #     user["first_name"],
+        #     user["last_name"],
+        #     params["age_from"],
+        #     user["sex"],
+        #     params["city"],
         # )
-        # for i in p_id:
-        #     vk_db.save_photo(
-        #         user2,
-        #         i
-        #     )
-        # vk_db.save_match(
-        #     user1,
-        #     user2
-        # )
-    # except Exception as Error:
-    #     write_msg(event.user_id, Error, keyboard_main)
-    #     pass
-    send_photo(event.user_id, ids[0]["id"], keyboard_main)
+        user2 = vk_db.save_user(
+                ids[person_counter]["id"],
+                ids[person_counter]["first_name"],
+                ids[person_counter]["last_name"],
+                params["age_from"],
+                # ids[person_counter]["sex"],
+                params["sex"],
+                params["city"]
+        )
+        for i in p_id:
+            vk_db.save_photo(
+                user2,
+                i
+            )
+        vk_db.save_match(
+            user1,
+            user2
+        )
+        vk_db.check()
+    except Exception as Error:
+        print("try user2 ex", Error)
+
+    send_photo(event.user_id, ids[person_counter]["id"], keyboard_main)
     return ids
 
 def go_next(user_id):  # теперь после фикса БД тут не работает отправка 3 фото
 
     global person_counter, ids, chunk_counter
     person_counter += 1
-    print(f"go_next: user_id : {user_id}")
-
-    if person_counter == len(ids):
-        print('сработал if в go next')
-        person_counter = 0
-
-        chunk_counter += 1
-    print('1111111')
+    # print(f"go_next: user_id : {user_id}")
+    time.sleep(0.5)
     ids = vksaver.get_user_list(**params, offset=chunk_counter * chunk_size)
+    print('1st IDS')
+    print(ids)
+    print(person_counter)
+    print(ids[person_counter])
+    print(ids[person_counter]["id"])
+    time.sleep(0.5)
+    if ids[person_counter]["is_closed"] == True:
+        print('сработал if в is closed go next')
+        go_next(user_id)
+        return
+    top_photos = vksaver.get_toprated_photos(ids[person_counter]["id"])
+    p_id = list(top_photos.values())
+    if len(p_id) < 3:
+        print('сработал if v go_next')
+        go_next(user_id)
+        return ids
+    if person_counter == len(ids):
+        print('сработал if в go next s chunk')
+        person_counter = 0
+        chunk_counter += 1
+    # print('1111111')
+
+
     try:
-        print("try_go_next")
-        print(ids)
-        print(ids[person_counter])
+        # print("try_go_next")
+        # print(ids)
+        # print(ids[person_counter])
         top_photos = vksaver.get_toprated_photos(ids[person_counter]["id"])
-        print(f"try go_next_top_photos {top_photos}")
+        # print(f"try go_next_top_photos {top_photos}")
         p_id = list(top_photos.values())
-        print(f"go_next_try: {ids}")
+        # print(f"go_next_try: {ids}")
         send_match_message(ids, user_id)
-        print(f'go_next_try_person_counter: {ids[person_counter]["id"]}')
+        # print(f'go_next_try_person_counter: {ids[person_counter]["id"]}')
+        pprint(ids)
+        pprint(f'params: {params}')
+        # print(f'"user2_go_next" {ids[person_counter]["id"]} {ids[person_counter]["first_name"]} {ids[person_counter]["last_name"]} {params["age_from"]} {ids[person_counter]["sex"]} {params["city"]}')
+        print(f'person_conter: {person_counter}')
         send_photo(event.user_id, ids[person_counter]["id"], keyboard_main)
 
-        # user2 = vk_db.save_user(
-        #     ids[0]["id"],
-        #     ids[0]["first_name"],
-        #     ids[0]["last_name"],
-        #     params["age_from"],
-        #     ids[0]["sex"],
-        #     params["city"]
-        # )
-        # почему-то второго юзера не сохраняет, наверно не видит params
-        # for i in p_id:
-        #     vk_db.save_photo(
-        #         user2,
-        #         i
-        #     )
-        #
-        # vk_db.save_match(
-        #     vk_db.get_user_params(event.user_id),
-        #     user2
-        # )
+        try:
+            user2 = vk_db.save_user(
+                ids[person_counter]["id"],
+                ids[person_counter]["first_name"],
+                ids[person_counter]["last_name"],
+                params["age_from"],
+                # ids[person_counter]["sex"],
+                params["sex"],
+                params["city"]
+            )
+            print("user2 добавлен в БД")
+            print(f'ids_person add v db match {ids[person_counter]}')
+            # почему-то второго юзера не сохраняет, наверно не видит params
+            for i in p_id:
+                print(i)
+                vk_db.save_photo(
+                    user2,
+                    i
+                )
+
+
+
+            vk_db.save_match(
+                vk_db.get_user_params(event.user_id),
+                user2
+            )
+
+            print("match добавлен")
+            pprint(ids)
+            print(f'ids_person posle match {ids[person_counter]}')
+        except Exception as er:
+            print('error', er)
     except Exception as ex:
-        print(ex)
-        pass
+        print("try go next save db", ex)
+    return ids
 
 
 for event in longpoll.listen():
@@ -294,11 +351,17 @@ for event in longpoll.listen():
             keyboard_main = show_keyboard_main()
             write_msg(event.user_id, f"ТУТ_БУДЕТ_ИЗБРАННОЕ", keyboard_main)
         elif event.text == "❤ Сохранить в избранном":
+            ids = vksaver.get_user_list(**params, offset=chunk_counter * chunk_size)
             keyboard_main = show_keyboard_main()
             write_msg(event.user_id, f"Сохранен в избранном", keyboard_main)
-            user = vk_db.query_user_id(event.user_id)
-            user2 = vk_db.query_user_id(ids[person_counter])
-            match = vk_db.query_match_id(user, user2)
+            # user = vk_db.query_user_id(event.user_id)
+            # user2 = vk_db.query_user_id(ids[person_counter]["id"])
+            time.sleep(0.5)
+            print(f"ids in favourite: {ids}")
+            print(person_counter)
+            print(f'event.user_id: {event.user_id}')
+            print(f'event.user_id2: {ids[person_counter]["id"]}')
+            match = vk_db.query_match_id(event.user_id, ids[person_counter]["id"])
             vk_db.add_to_favourite(match)
         elif event.text == "Очистить беседу":
             clear_chat(event.user_id)
