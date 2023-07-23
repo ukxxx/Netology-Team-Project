@@ -138,3 +138,4 @@ class VkSaver:
                         counter_old_photos = priority_old_photos.index(size["type"])
 
         return result
+
