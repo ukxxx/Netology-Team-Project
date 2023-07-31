@@ -21,15 +21,19 @@ This is a simple matchmaking bot for VK (VKontakte) social media platform. The b
 
 1. Clone the repository to your local machine:
 
-```git clone https://github.com/your-username/vk-matchmaking-bot.git```
+```shell
+git clone https://github.com/your-username/vk-matchmaking-bot.git
+```
 
 2.  Install the required libraries:
 
-```pip install -r requirements.txt```
+```shell
+pip install -r requirements.txt
+```
 
 3.  Create a .env file in the project root directory and add the following environment variables:
 
-```
+```python
 GROUP_TOKEN=your_group_token
 PERSONAL_TOKEN=your_personal_token
 ```
@@ -40,14 +44,16 @@ PERSONAL_TOKEN=your_personal_token
 
 To start the bot, run the main script:
 
-```python main.py```
+```shell
+python main.py
+```
 
 Once the bot is running, it will listen for user messages and respond to commands.
 
-    To start the matchmaking process, send the command "💓 Начать 💓".
-    To view the next potential match, send the command "💔 Дальше".
-    To view the list of saved favorite matches, send the command "😍 Посмотреть Избранное 😍".
-    To save the current potential match to favorites, send the command "❤ Сохранить в избранном".
+* To start the matchmaking process, send the command "💓 Начать 💓".
+* To view the next potential match, send the command "💔 Дальше".
+* To view the list of saved favorite matches, send the command "😍 Посмотреть Избранное 😍".
+* To save the current potential match to favorites, send the command "❤ Сохранить в избранном".
 
 ### Credits
 
