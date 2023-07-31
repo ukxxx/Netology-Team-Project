@@ -35,7 +35,7 @@ This is a simple matchmaking bot for VK (VKontakte) social media platform. The b
 
 4.  Set up the VK Database and create the necessary tables by running the VKdb.py script.
 
-###Usage
+### Usage
 
 To start the bot, run the main script:
 
@@ -48,10 +48,10 @@ Once the bot is running, it will listen for user messages and respond to command
     To view the list of saved favorite matches, send the command 😍 Посмотреть Избранное 😍.
     To save the current potential match to favorites, send the command ❤ Сохранить в избранном.
 
-###Credits
+### Credits
 
 The matchmaking algorithm and VK API interaction code are inspired by various VK bot development tutorials and examples.
 
-###License
+### License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
