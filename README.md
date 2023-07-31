@@ -25,12 +25,12 @@ This is a simple matchmaking bot for VK (VKontakte) social media platform. The b
 
 2.  Install the required libraries:
 
-    '''pip install -r requirements.txt'''
+    ```pip install -r requirements.txt```
 
 3.  Create a .env file in the project root directory and add the following environment variables:
 
-    GROUP_TOKEN=your_group_token
-    PERSONAL_TOKEN=your_personal_token
+    ```GROUP_TOKEN=your_group_token```
+    ```PERSONAL_TOKEN=your_personal_token```
 
 4.  Set up the VK Database and create the necessary tables by running the VKdb.py script.
 
