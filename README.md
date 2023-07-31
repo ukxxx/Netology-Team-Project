@@ -29,8 +29,9 @@ This is a simple matchmaking bot for VK (VKontakte) social media platform. The b
 
 3.  Create a .env file in the project root directory and add the following environment variables:
 
-```GROUP_TOKEN=your_group_token```
-```PERSONAL_TOKEN=your_personal_token```
+```python
+GROUP_TOKEN=your_group_token
+PERSONAL_TOKEN=your_personal_token```
 
 4.  Set up the VK Database and create the necessary tables by running the VKdb.py script.
 
