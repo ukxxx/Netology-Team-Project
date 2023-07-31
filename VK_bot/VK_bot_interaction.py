@@ -17,7 +17,7 @@ import os
 load_dotenv()
 
 
-class VK_bot:
+class VKBot:
     def __init__(self):
         self.token = os.getenv("GROUP_TOKEN")
         self.p_token = os.getenv("PERSONAL_TOKEN")
@@ -44,18 +44,9 @@ class VK_bot:
         keyboard_main.add_button("❤ Сохранить в избранном", VkKeyboardColor.POSITIVE)
         keyboard_main.add_line()
         keyboard_main.add_button("😍 показать Избранное 😍", VkKeyboardColor.PRIMARY)
+        keyboard_main.add_button("🙈 В черный список 🙈", VkKeyboardColor.SECONDARY)
         self.keyboard_main = keyboard_main.get_keyboard()
         return self.keyboard_main
-
-    # try:
-    #     connect = requests.get(
-    #         f"https://{res['server']}?"
-    #         f"act=a_check&key={res['key']}&ts={res['ts']}&wait=25&mode=2&version=3"
-    #     )
-    #     if connect.status_code == 200:
-    #         print("Соединение с VK установлено")
-    # except Exception as Error:
-    #     print(Error)
 
     def count_age(self, bdate, user_id):
         if len(bdate) > 5:
@@ -171,7 +162,8 @@ class VK_bot:
                 self.params["city"],
             )
             print(
-                f'{self.ids[self.person_counter]["first_name"]} {self.ids[self.person_counter]["last_name"]} добавлен в Базу Данных'
+                f'{self.ids[self.person_counter]["first_name"]} '
+                f'{self.ids[self.person_counter]["last_name"]} добавлен в Базу Данных'
             )
             for i in self.p_id:
                 self.vk_db.save_photo(user2, i)
@@ -228,7 +220,8 @@ class VK_bot:
                     self.params["city"],
                 )
                 print(
-                    f'{self.ids[self.person_counter]["first_name"]} {self.ids[self.person_counter]["last_name"]} добавлен в Базу Данных'
+                    f'{self.ids[self.person_counter]["first_name"]}'
+                    f' {self.ids[self.person_counter]["last_name"]} добавлен в Базу Данных'
                 )
                 for i in self.p_id:
                     self.vk_db.save_photo(user2, i)

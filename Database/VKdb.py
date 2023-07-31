@@ -1,6 +1,6 @@
 import os
 from sqlalchemy.orm import sessionmaker
-from Database.models import create_tables, User, Photo, Match, Favourite
+from Database.models import create_tables, User, Photo, Match, Favourite, Blacklist
 from sqlalchemy import create_engine
 from dotenv import load_dotenv
 
@@ -8,6 +8,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # VK Dating Bot Database Class
+
+
 class VKDataBase:
     def __init__(self):
         dialect = "postgresql"
@@ -88,6 +90,7 @@ class VKDataBase:
         # Delete all data from the tables (Photo, Favourite, Match, User) and commit the changes
         self.session.query(Photo).delete()
         self.session.query(Favourite).delete()
+        self.session.query(Blacklist).delete()
         self.session.query(Match).delete()
         self.session.query(User).delete()
         self.session.commit()
@@ -132,6 +135,32 @@ class VKDataBase:
             fav_list.append(i.user_id)
 
         return fav_list
+
+
+    def add_to_black_list(self, match):
+        # Create a new Favourite object representing a favorite match and add it to the session
+        blacklist = Blacklist(match_id=match.match_id)
+        self.session.add(blacklist)
+        self.session.commit()
+        return blacklist
+
+
+    def get_black_list(self, user_id):
+        # Query and return a list of user_ids for all favorite matches of the given user_id
+        blacklist = (
+            self.session.query(
+                Blacklist.blacklist_id, Blacklist.match_id, Match.vk_id, Match.user_id
+            )
+            .join(Blacklist)
+            .filter(Match.vk_id == user_id)
+        )
+        black_list = []
+
+        for i in blacklist:
+            black_list.append(i.user_id)
+        print(black_list)
+        return black_list
+
 
 if __name__ == "__main__":
     vk_db = VKDataBase()
