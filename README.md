@@ -4,7 +4,7 @@ This is a simple matchmaking bot for VK (VKontakte) social media platform. The b
 
 ## Features
 
-- Start the matchmaking process with a custom keyboard.
+- Matchmaking process based on user age and location.
 - View potential matches one by one and move to the next match.
 - Save a potential match to favorites for future reference.
 - View the list of saved favorite matches.
@@ -16,7 +16,6 @@ This is a simple matchmaking bot for VK (VKontakte) social media platform. The b
 - Python 3.7 or higher
 - VK Group token
 - VK Personal token
-- VK API Long Poll Server URL
 
 ### Installation
 
