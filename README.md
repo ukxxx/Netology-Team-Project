@@ -21,7 +21,7 @@ This is a simple matchmaking bot for VK (VKontakte) social media platform. The b
 
 1. Clone the repository to your local machine:
 
-    git clone https://github.com/your-username/vk-matchmaking-bot.git
+    ```git clone https://github.com/your-username/vk-matchmaking-bot.git```
 
 2.  Install the required libraries:
 
@@ -38,7 +38,7 @@ This is a simple matchmaking bot for VK (VKontakte) social media platform. The b
 
 To start the bot, run the main script:
 
-    python main.py
+    ```python main.py```
 
 Once the bot is running, it will listen for user messages and respond to commands.
 
