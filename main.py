@@ -410,9 +410,9 @@ def go_next(user_id):
 
         # Save the match between the user initiating the match and the next matched user using 'save_match'
         vk_db.save_match(vk_db.get_user_params(event.user_id), user2)
-        print("match добавлен")
-    except Exception as er:
-        print("error", er)
+        print("Мatch добавлен в базу данных")
+    except Exception as Error:
+        print("Ошибка в функции go_next", Error)
 
     return ids
 
