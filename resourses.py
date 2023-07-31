@@ -1,26 +1,3 @@
-from vk_api.keyboard import VkKeyboard, VkKeyboardColor
-
-keyboard_first = VkKeyboard(one_time=True, inline=False)
-keyboard_first.add_button("💓 Начать 💓", VkKeyboardColor.POSITIVE)
-keyboard_first = keyboard_first.get_keyboard()
-
-keyboard_main = VkKeyboard(one_time=False, inline=False)
-keyboard_main.add_button("💔 Дальше", VkKeyboardColor.NEGATIVE)
-keyboard_main.add_button("❤ Сохранить в избранном", VkKeyboardColor.PRIMARY)
-keyboard_main.add_line()
-keyboard_main.add_button("😍 Избранное")
-keyboard_main.add_button("Очистить беседу")
-keyboard_main = keyboard_main.get_keyboard()
-
-keyboard_fav = VkKeyboard(one_time=False, inline=False)
-keyboard_fav.add_button("⬅️ Назад")
-keyboard_fav.add_button("Вперед ➡️")
-keyboard_fav.add_line
-keyboard_fav.add_button("Удалить", VkKeyboardColor.NEGATIVE)
-keyboard_fav.add_line
-keyboard_fav.add_button("↩️ Вернуться в бота")
-keyboard_fav = keyboard_fav.get_keyboard()
-
 phrases = [
     "Не волнуйтесь, я обещаю не подобрать вам пингвина.",
     "Пока я ищу вашу идеальную пару, можете тренировать свои умные фразы.",

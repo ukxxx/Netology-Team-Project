@@ -35,13 +35,13 @@ except Exception as Error:
     print(Error)
 
 for event in longpoll.listen():
-
     if event.type == VkEventType.MESSAGE_NEW and event.to_me:
-
         keyboard_first = vkbot.show_keyboard_first()
 
         if event.text == "💓 Начать 💓":
-            vkbot.write_msg(event.user_id, f"Может быть это твоя любовь?", keyboard_first)
+            vkbot.write_msg(
+                event.user_id, f"Может быть это твоя любовь?", keyboard_first
+            )
             keyboard_main = vkbot.show_keyboard_main()
             vkbot.ids += vkbot.go_first(event.user_id)
 
@@ -55,15 +55,21 @@ for event in longpoll.listen():
         elif event.text == "😍 показать Избранное 😍":
             keyboard_main = vkbot.show_keyboard_main()
             favourite_list = vkbot.vk_db.get_favourites_list(event.user_id)
-            fav_links = '\n'.join(["https://vk.com/id"+str(i) for i in favourite_list])
-            vkbot.write_msg(event.user_id, f"😍 Лучшие из лучших 😍 \n {fav_links}", keyboard_main)
+            fav_links = "\n".join(
+                ["https://vk.com/id" + str(i) for i in favourite_list]
+            )
+            vkbot.write_msg(
+                event.user_id, f"😍 Лучшие из лучших 😍 \n {fav_links}", keyboard_main
+            )
 
         elif event.text == "❤ Сохранить в избранном":
             ids = vkbot.ids
             keyboard_main = vkbot.show_keyboard_main()
             vkbot.write_msg(event.user_id, f"Сохранен в избранном", keyboard_main)
             time.sleep(0.5)
-            match = vkbot.vk_db.query_match_id(event.user_id, ids[vkbot.person_counter]["id"])
+            match = vkbot.vk_db.query_match_id(
+                event.user_id, ids[vkbot.person_counter]["id"]
+            )
             vkbot.vk_db.add_to_favourite(match)
 
         else:
