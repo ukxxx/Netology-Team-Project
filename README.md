@@ -29,7 +29,7 @@ This is a simple matchmaking bot for VK (VKontakte) social media platform. The b
 
 3.  Create a .env file in the project root directory and add the following environment variables:
 
-```python
+```
 GROUP_TOKEN=your_group_token
 PERSONAL_TOKEN=your_personal_token
 ```
