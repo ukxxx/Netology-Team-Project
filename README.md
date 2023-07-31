@@ -25,7 +25,7 @@ This is a simple matchmaking bot for VK (VKontakte) social media platform. The b
 
 2.  Install the required libraries:
 
-    pip install -r requirements.txt
+    '''pip install -r requirements.txt'''
 
 3.  Create a .env file in the project root directory and add the following environment variables:
 
