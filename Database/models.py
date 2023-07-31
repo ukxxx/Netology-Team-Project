@@ -110,5 +110,5 @@ class Blacklist(Base):
 
 def create_tables(engine):
     # Drop existing tables (if any) and create new ones
-    Base.metadata.drop_all(engine)
+    # Base.metadata.drop_all(engine)
     Base.metadata.create_all(engine)

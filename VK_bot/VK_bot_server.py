@@ -67,7 +67,7 @@ for event in longpoll.listen():
             keyboard_main = vkbot.show_keyboard_main()
             vkbot.write_msg(event.user_id, f"Сохранен в избранном", keyboard_main)
             time.sleep(0.5)
-            match = vkbot.vk_db.query_match_id(
+            match = vkbot.vk_db.query_match(
                 event.user_id, ids[vkbot.person_counter]["id"]
             )
             vkbot.vk_db.add_to_favourite(match)
@@ -77,7 +77,7 @@ for event in longpoll.listen():
             keyboard_main = vkbot.show_keyboard_main()
             vkbot.write_msg(event.user_id, f"Добавлен в черный список", keyboard_main)
             time.sleep(0.5)
-            match = vkbot.vk_db.query_match_id(
+            match = vkbot.vk_db.query_match(
                 event.user_id, ids[vkbot.person_counter]["id"]
             )
             vkbot.vk_db.add_to_black_list(match)

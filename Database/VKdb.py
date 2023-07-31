@@ -105,6 +105,16 @@ class VKDataBase:
             u_id = i.vk_id
         return u_id
 
+    def query_match(self, user_id, target_id):
+        # Query and return the match associated with the given user_id and target_id
+        match = (
+            self.session.query(Match.match_id, Match.vk_id, Match.user_id)
+            .filter(Match.vk_id == user_id)
+            .filter(Match.user_id == target_id)
+            .one()
+        )
+        return match
+
     def query_match_id(self, user_id, target_id):
         # Query and return the match_id associated with the given user_id and target_id
         match = (
@@ -113,7 +123,8 @@ class VKDataBase:
             .filter(Match.user_id == target_id)
             .one()
         )
-        return match
+
+        return match[2]
 
     def get_user_params(self, vk_id):
         # Query and return the User object associated with the given vk_id
@@ -136,7 +147,6 @@ class VKDataBase:
 
         return fav_list
 
-
     def add_to_black_list(self, match):
         # Create a new Favourite object representing a favorite match and add it to the session
         blacklist = Blacklist(match_id=match.match_id)
@@ -144,9 +154,8 @@ class VKDataBase:
         self.session.commit()
         return blacklist
 
-
     def get_black_list(self, user_id):
-        # Query and return a list of user_ids for all favorite matches of the given user_id
+        # Query and return a blacklist of the given user_id
         blacklist = (
             self.session.query(
                 Blacklist.blacklist_id, Blacklist.match_id, Match.vk_id, Match.user_id
@@ -162,7 +171,7 @@ class VKDataBase:
         return black_list
 
 
-if __name__ == "__main__":
-    vk_db = VKDataBase()
-    vk_db.delete()
-    vk_db.create_tables()
+# if __name__ == "__main__":
+#     vk_db = VKDataBase()
+    # vk_db.delete()
+    # vk_db.create_tables()
