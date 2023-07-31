@@ -246,7 +246,7 @@ def send_match_message(ids, user_id):
 
 
 
-def go_first(user_id):  # функция отправки фото для первого использования "Начали"
+def go_first(user_id):  # функция отправки фото для первого использования "Начать"
     """
     Perform the first match for a user and send photos to initiate the interaction.
 
@@ -481,14 +481,8 @@ for event in longpoll.listen():
                 write_msg(event.user_id, f"Давай сначала подберем тебе пару", show_keyboard_first())
                 ids += go_first(event.user_id)
             else:
-                # Retrieve the next chunk of potential matches
-                ids = vksaver.get_user_list(**params, offset=chunk_counter * chunk_size)
-
                 # Send a confirmation message to the user
                 write_msg(event.user_id, f"Сохранено, едем дальше", show_keyboard_main())
-
-                # Wait for a short duration to avoid API request throttling
-                time.sleep(0.5)
 
                 # Save the match to favorites in the database using 'add_to_favourite' function
                 match = vk_db.query_match_id(event.user_id, ids[person_counter]["id"])
