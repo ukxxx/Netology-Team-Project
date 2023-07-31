@@ -22,7 +22,7 @@ This is a simple matchmaking bot for VK (VKontakte) social media platform. The b
 1. Clone the repository to your local machine:
 
 ```shell
-git clone https://github.com/your-username/vk-matchmaking-bot.git
+git clone https://github.com//ukxxx/VK_dating_bot.git
 ```
 
 2.  Install the required libraries:
