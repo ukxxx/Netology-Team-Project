@@ -50,10 +50,11 @@ python main.py
 
 Once the bot is running, it will listen for user messages and respond to commands.
 
-* To start the matchmaking process, send the command "💓 Начать 💓".
-* To view the next potential match, send the command "💔 Дальше".
-* To view the list of saved favorite matches, send the command "😍 Посмотреть Избранное 😍".
-* To save the current potential match to favorites, send the command "❤ Сохранить в избранном".
+* To start the matchmaking process, click on "💓 Начать 💓".
+* To view the next potential match, click on "💔 Дальше".
+* To view the list of saved favorite matches, click on "😍 Посмотреть Избранное 😍".
+* To save the current potential match to favorites, click on "❤ Сохранить в избранном".
+* To exclude the current user from the output and add him to the blacklist, click on "🙈 В черный список 🙈"
 
 ### Credits
 
