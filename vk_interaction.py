@@ -122,9 +122,9 @@ class VkSaver:
             ).json()["response"]["items"]
 
             combined_photos_list = photos_profile_list + photos_list
-        except Exception as er:
+        except Exception as error:
             combined_photos_list = photos_profile_list
-            print(er)
+            print(f'Возникла ошибка при обработке фотографий: {error}')
 
         # Sort the photos based on the number of likes in descending order and select the top 3
         toprated_list = sorted(
