@@ -1,6 +1,6 @@
 import os
 from sqlalchemy.orm import sessionmaker
-from Database.models import create_tables, User, Photo, Match, Favourite
+from Database.models import create_tables, User, Photo, Match, Favourite, Blacklist
 from sqlalchemy import create_engine
 from dotenv import load_dotenv
 
@@ -8,6 +8,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # VK Dating Bot Database Class
+
+
 class VKDataBase:
     def __init__(self):
         dialect = "postgresql"
@@ -88,6 +90,7 @@ class VKDataBase:
         # Delete all data from the tables (Photo, Favourite, Match, User) and commit the changes
         self.session.query(Photo).delete()
         self.session.query(Favourite).delete()
+        self.session.query(Blacklist).delete()
         self.session.query(Match).delete()
         self.session.query(User).delete()
         self.session.commit()
@@ -102,6 +105,16 @@ class VKDataBase:
             u_id = i.vk_id
         return u_id
 
+    def query_match(self, user_id, target_id):
+        # Query and return the match associated with the given user_id and target_id
+        match = (
+            self.session.query(Match.match_id, Match.vk_id, Match.user_id)
+            .filter(Match.vk_id == user_id)
+            .filter(Match.user_id == target_id)
+            .one()
+        )
+        return match
+
     def query_match_id(self, user_id, target_id):
         # Query and return the match_id associated with the given user_id and target_id
         match = (
@@ -110,7 +123,8 @@ class VKDataBase:
             .filter(Match.user_id == target_id)
             .one()
         )
-        return match
+
+        return match[2]
 
     def get_user_params(self, vk_id):
         # Query and return the User object associated with the given vk_id
@@ -133,7 +147,31 @@ class VKDataBase:
 
         return fav_list
 
-if __name__ == "__main__":
-    vk_db = VKDataBase()
-    vk_db.delete()
-    vk_db.create_tables()
+    def add_to_black_list(self, match):
+        # Create a new Favourite object representing a favorite match and add it to the session
+        blacklist = Blacklist(match_id=match.match_id)
+        self.session.add(blacklist)
+        self.session.commit()
+        return blacklist
+
+    def get_black_list(self, user_id):
+        # Query and return a blacklist of the given user_id
+        blacklist = (
+            self.session.query(
+                Blacklist.blacklist_id, Blacklist.match_id, Match.vk_id, Match.user_id
+            )
+            .join(Blacklist)
+            .filter(Match.vk_id == user_id)
+        )
+        black_list = []
+
+        for i in blacklist:
+            black_list.append(i.user_id)
+        print(black_list)
+        return black_list
+
+
+# if __name__ == "__main__":
+#     vk_db = VKDataBase()
+    # vk_db.delete()
+    # vk_db.create_tables()

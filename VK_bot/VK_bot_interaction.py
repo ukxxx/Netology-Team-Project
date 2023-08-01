@@ -17,13 +17,13 @@ import os
 load_dotenv()
 
 
-class VK_bot:
+class VKBot:
     def __init__(self):
         self.token = os.getenv("GROUP_TOKEN")
         self.p_token = os.getenv("PERSONAL_TOKEN")
         self.vk_db = VKDataBase()
-        self.vk_db.delete()
-        self.vk_db.create_tables()
+        # self.vk_db.delete()
+        # self.vk_db.create_tables()
         self.vksaver = VkSaver(self.p_token)
         self.vk = vk_api.VkApi(token=self.token)
         self.vk_pers = vk_api.VkApi(token=self.p_token)
@@ -44,18 +44,9 @@ class VK_bot:
         keyboard_main.add_button("❤ Сохранить в избранном", VkKeyboardColor.POSITIVE)
         keyboard_main.add_line()
         keyboard_main.add_button("😍 показать Избранное 😍", VkKeyboardColor.PRIMARY)
+        keyboard_main.add_button("🙈 В черный список 🙈", VkKeyboardColor.SECONDARY)
         self.keyboard_main = keyboard_main.get_keyboard()
         return self.keyboard_main
-
-    # try:
-    #     connect = requests.get(
-    #         f"https://{res['server']}?"
-    #         f"act=a_check&key={res['key']}&ts={res['ts']}&wait=25&mode=2&version=3"
-    #     )
-    #     if connect.status_code == 200:
-    #         print("Соединение с VK установлено")
-    # except Exception as Error:
-    #     print(Error)
 
     def count_age(self, bdate, user_id):
         if len(bdate) > 5:
@@ -127,6 +118,22 @@ class VK_bot:
         message = f"{name}, \n" f" {profile_link}"
         self.write_msg(self.user_id, message, self.keyboard_main)
 
+
+    def check_blacklist(self):
+        try:
+            self.check_match = self.vk_db.query_match_id(self.user_id, self.ids[self.person_counter]["id"])
+            print(f'Проверили check_match: {self.check_match}')
+            self.black_list = self.vk_db.get_black_list(self.user_id)
+            print(f'Проверили black_list: {self.black_list}')
+            if self.check_match in self.black_list:
+                print('Есть в черном списке')
+                self.go_next(self.user_id)
+                return
+        except Exception as er:
+            self.vk_db.session.rollback()
+            print(f'checking blacklist: {er}')
+            pass
+
     def go_first(
         self, user_id
     ):  # функция отправки фото для первого использования "Начали"
@@ -135,6 +142,7 @@ class VK_bot:
         self.user = self.vksaver.get_user_data(user_id)
         self.params = self.set_params_to_match(self.user)
         self.ids = self.vksaver.get_user_list(**self.params, count=self.chunk_size)
+        self.check_blacklist()
         self.top_photos = self.vksaver.get_toprated_photos(
             self.ids[self.person_counter]["id"]
         )
@@ -153,6 +161,7 @@ class VK_bot:
                 f'{self.user["first_name"]} {self.user["last_name"]} добавлен в Базу Данных'
             )
         except Exception as ex:
+            self.vk_db.session.rollback()
             print("try user1 ex", ex)
 
         if len(self.p_id) < 3:
@@ -171,7 +180,8 @@ class VK_bot:
                 self.params["city"],
             )
             print(
-                f'{self.ids[self.person_counter]["first_name"]} {self.ids[self.person_counter]["last_name"]} добавлен в Базу Данных'
+                f'{self.ids[self.person_counter]["first_name"]} '
+                f'{self.ids[self.person_counter]["last_name"]} добавлен в Базу Данных'
             )
             for i in self.p_id:
                 self.vk_db.save_photo(user2, i)
@@ -179,6 +189,7 @@ class VK_bot:
             self.vk_db.save_match(user1, user2)
             print("Match добавлен")
         except Exception as Error:
+            self.vk_db.session.rollback()
             print("try user2 ex", Error)
 
         self.send_photo(
@@ -197,6 +208,7 @@ class VK_bot:
         if self.ids[self.person_counter]["is_closed"] is True:
             self.go_next(user_id)
             return
+        self.check_blacklist()
         self.top_photos = self.vksaver.get_toprated_photos(
             self.ids[self.person_counter]["id"]
         )
@@ -228,7 +240,8 @@ class VK_bot:
                     self.params["city"],
                 )
                 print(
-                    f'{self.ids[self.person_counter]["first_name"]} {self.ids[self.person_counter]["last_name"]} добавлен в Базу Данных'
+                    f'{self.ids[self.person_counter]["first_name"]}'
+                    f' {self.ids[self.person_counter]["last_name"]} добавлен в Базу Данных'
                 )
                 for i in self.p_id:
                     self.vk_db.save_photo(user2, i)
@@ -236,7 +249,9 @@ class VK_bot:
                 self.vk_db.save_match(self.vk_db.get_user_params(self.user_id), user2)
                 print("match добавлен")
             except Exception as er:
+                self.vk_db.session.rollback()
                 print("error", er)
         except Exception as ex:
+            self.vk_db.session.rollback()
             print("try go next save db", ex)
         return self.ids

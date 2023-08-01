@@ -5,6 +5,8 @@ from sqlalchemy.orm import declarative_base, relationship
 Base = declarative_base()
 
 # Define the User class to represent user data
+
+
 class User(Base):
     __tablename__ = "users"
 
@@ -88,8 +90,25 @@ class Favourite(Base):
         return f"Favourite {self.favourite_id}: {self.match_id}"
 
 
+class Blacklist(Base):
+    __tablename__ = "blacklist"
+
+    # Primary key for the favorite table
+    blacklist_id = sq.Column(sq.BigInteger, primary_key=True)
+
+    # Foreign key linking favorites to matches
+    match_id = sq.Column(sq.BigInteger, sq.ForeignKey("matches.match_id"), nullable=False)
+
+    # Relationship with the Match class using backref to access favorites from a match object
+    blacklists = relationship(Match, backref="blacklist")
+
+    def __str__(self):
+        return f"Favourite {self.blacklist_id}: {self.match_id}"
+
 # Function to create tables based on the defined models
+
+
 def create_tables(engine):
     # Drop existing tables (if any) and create new ones
-    Base.metadata.drop_all(engine)
+    # Base.metadata.drop_all(engine)
     Base.metadata.create_all(engine)

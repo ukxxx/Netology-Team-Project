@@ -14,14 +14,14 @@ from Database.VKdb import VKDataBase
 from resourses import *
 import os
 
-from VK_bot_interaction import VK_bot
+from VK_bot_interaction import VKBot
 
 logging.basicConfig(level=logging.DEBUG)
 
 load_dotenv()
 token = os.getenv("GROUP_TOKEN")
 vk = vk_api.VkApi(token=token)
-vkbot = VK_bot()
+vkbot = VKBot()
 longpoll = VkLongPoll(vk)
 res = vk.method("messages.getLongPollServer")
 try:
@@ -67,10 +67,22 @@ for event in longpoll.listen():
             keyboard_main = vkbot.show_keyboard_main()
             vkbot.write_msg(event.user_id, f"Сохранен в избранном", keyboard_main)
             time.sleep(0.5)
-            match = vkbot.vk_db.query_match_id(
+            match = vkbot.vk_db.query_match(
                 event.user_id, ids[vkbot.person_counter]["id"]
             )
             vkbot.vk_db.add_to_favourite(match)
+
+        elif event.text == "🙈 В черный список 🙈":
+            ids = vkbot.ids
+            keyboard_main = vkbot.show_keyboard_main()
+            vkbot.write_msg(event.user_id, f"Добавлен в черный список", keyboard_main)
+            time.sleep(0.5)
+            match = vkbot.vk_db.query_match(
+                event.user_id, ids[vkbot.person_counter]["id"]
+            )
+            vkbot.vk_db.add_to_black_list(match)
+            time.sleep(0.5)
+            vkbot.vk_db.get_black_list(event.user_id)
 
         else:
             vkbot.write_msg(event.user_id, f"Привет! Начнем?", keyboard_first)

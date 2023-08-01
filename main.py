@@ -485,7 +485,7 @@ for event in longpoll.listen():
                 write_msg(event.user_id, f"Сохранено, едем дальше", show_keyboard_main())
 
                 # Save the match to favorites in the database using 'add_to_favourite' function
-                match = vk_db.query_match_id(event.user_id, ids[person_counter]["id"])
+                match = vk_db.query_match(event.user_id, ids[person_counter]["id"])
                 vk_db.add_to_favourite(match)
 
                 # Move to the next potential match
