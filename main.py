@@ -18,7 +18,7 @@ from resourses import phrases
 
 
 # Setup logging for debugging
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.CRITICAL)
 
 # Load environment variables from .env file
 load_dotenv()
@@ -80,7 +80,7 @@ try:
     if connect.status_code == 200:
         print("Соединение с VK установлено")
 except Exception as Error:
-    print(Error)
+    print(f'Ошибка соединения с VK', Error)
 
 
 def count_age(bdate):
@@ -291,8 +291,8 @@ def go_first(user_id):  # функция отправки фото для пер
             params["city"],
         )
         print(f'{user["first_name"]} {user["last_name"]} добавлен в Базу Данных')
-    except Exception as ex:
-        print("try user1 ex", ex)
+    except Exception as Error:
+        print(f"Ошибка сохранения пользователя 1", Error)
 
     # If the first matched user has less than 3 photos, proceed to the next user
     if len(p_id) < 3:
@@ -313,17 +313,17 @@ def go_first(user_id):  # функция отправки фото для пер
             params["city"],
         )
         print(
-            f'{ids[person_counter]["first_name"]} {ids[person_counter]["last_name"]} добавлен в Базу Данных'
+            f'{ids[person_counter]["first_name"]} {ids[person_counter]["last_name"]} добавлен в базу данных'
         )
         # Save the photos of the second user in the database using 'save_photo' function
         for i in p_id:
             vk_db.save_photo(user2, i)
-            print(f"Фото добавлено в Базу Данных")
+            print(f"Фото добавлено базу данных")
         # Save the match between the first and second users in the database using 'save_match' function
         vk_db.save_match(user1, user2)
-        print("Match добавлен")
+        print("Match добавлен в базу даннных")
     except Exception as Error:
-        print("try user2 ex", Error)
+        print("Ошибка сохранения пользователя 2", Error)
 
     # Send photos of the second matched user to the user initiating the match
     send_photo(event.user_id, ids[person_counter]["id"], show_keyboard_main())
@@ -406,7 +406,7 @@ def go_next(user_id):
         # Save the top-rated photos of the next matched user in the database using 'save_photo'
         for i in p_id:
             vk_db.save_photo(user2, i)
-            print(f"Фото добавлено в базу")
+            print(f"Фото добавлено в базу данных")
 
         # Save the match between the user initiating the match and the next matched user using 'save_match'
         vk_db.save_match(vk_db.get_user_params(event.user_id), user2)
