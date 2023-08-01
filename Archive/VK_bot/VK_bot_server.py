@@ -8,7 +8,7 @@ import vk_api
 from vk_api.longpoll import VkLongPoll, VkEventType
 from dotenv import load_dotenv
 
-from vk_interaction import VkSaver
+from VK_API_interaction import VkSaver
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 from Database.VKdb import VKDataBase
 from resourses import *

@@ -173,5 +173,5 @@ class VKDataBase:
 
 # if __name__ == "__main__":
 #     vk_db = VKDataBase()
-    # vk_db.delete()
-    # vk_db.create_tables()
+# vk_db.delete()
+# vk_db.create_tables()

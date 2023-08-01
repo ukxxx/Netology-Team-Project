@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 # Load environment variables from .env file
 load_dotenv()
 
+
 # VkSaver Class for VK Dating Bot
 class VkSaver:
     # Base URL for VK API
@@ -124,7 +125,7 @@ class VkSaver:
             combined_photos_list = photos_profile_list + photos_list
         except Exception as error:
             combined_photos_list = photos_profile_list
-            print(f'Возникла ошибка при обработке фотографий: {error}')
+            print(f"Возникла ошибка при обработке фотографий: {error}")
 
         # Sort the photos based on the number of likes in descending order and select the top 3
         toprated_list = sorted(

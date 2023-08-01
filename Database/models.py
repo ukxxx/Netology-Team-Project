@@ -81,7 +81,9 @@ class Favourite(Base):
     favourite_id = sq.Column(sq.BigInteger, primary_key=True)
 
     # Foreign key linking favorites to matches
-    match_id = sq.Column(sq.BigInteger, sq.ForeignKey("matches.match_id"), nullable=False)
+    match_id = sq.Column(
+        sq.BigInteger, sq.ForeignKey("matches.match_id"), nullable=False
+    )
 
     # Relationship with the Match class using backref to access favorites from a match object
     favourites = relationship(Match, backref="favourite")
@@ -97,13 +99,16 @@ class Blacklist(Base):
     blacklist_id = sq.Column(sq.BigInteger, primary_key=True)
 
     # Foreign key linking favorites to matches
-    match_id = sq.Column(sq.BigInteger, sq.ForeignKey("matches.match_id"), nullable=False)
+    match_id = sq.Column(
+        sq.BigInteger, sq.ForeignKey("matches.match_id"), nullable=False
+    )
 
     # Relationship with the Match class using backref to access favorites from a match object
     blacklists = relationship(Match, backref="blacklist")
 
     def __str__(self):
         return f"Favourite {self.blacklist_id}: {self.match_id}"
+
 
 # Function to create tables based on the defined models
 
