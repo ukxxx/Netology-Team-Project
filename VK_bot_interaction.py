@@ -185,6 +185,13 @@ class VKBot:
             print(
                 f"Ошибка сохранения функцией go_first пользователя 1 в базу данных: {Error})"
             )
+        print(self.ids)
+        print(self.ids[self.person_counter]["relation"])
+        # Check if the current user's profile is closed, if so, move to the next user
+        if self.ids[self.person_counter]["is_closed"] is True \
+                or self.ids[self.person_counter]["can_access_closed"] is not True:
+            self.go_next(self.user_id)
+            return
 
         if len(self.p_id) < 3:
             self.go_next(self.user_id)
@@ -239,6 +246,10 @@ class VKBot:
             self.ids[self.person_counter]["id"]
         )
         self.p_id = list(self.top_photos.values())
+        if self.ids[self.person_counter]["is_closed"] is True \
+                or self.ids[self.person_counter]["can_access_closed"] is not True:
+            self.go_next(self.user_id)
+            return
         if len(self.p_id) < 3:
             self.go_next(self.user_id)
             return self.ids

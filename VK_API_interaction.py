@@ -42,7 +42,7 @@ class VkSaver:
             save_params = {
                 "access_token": os.getenv("GROUP_TOKEN"),
                 "v": "5.131",
-                "group_id": 221556634,
+                "group_id": os.getenv("GROUP_ID"),
                 "server": server,
                 "photo": photo,
                 "hash": hash,
@@ -75,9 +75,7 @@ class VkSaver:
             "age_from": age_from,
             "age_to": age_to,
             "has_photo": 1,
-            "is_closed": False,
-            "can_access_closed": True,
-            "relation": 6,
+            "fields": ["is_closed", "can_access_closed", "relation"],
             "count": count,
             "offset": offset,
         }
